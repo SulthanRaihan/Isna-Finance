@@ -21,6 +21,7 @@ build==1.6.1
     # via pip-tools
 certifi==2026.7.22
     # via
+    #   -c requirements.txt
     #   httpcore
     #   httpx
 click==8.5.0
@@ -42,9 +43,13 @@ h11==0.16.0
     #   httpcore
     #   uvicorn
 httpcore==1.0.9
-    # via httpx
+    # via
+    #   -c requirements.txt
+    #   httpx
 httpx==0.28.1
-    # via isna-finance-api (pyproject.toml)
+    # via
+    #   -c requirements.txt
+    #   isna-finance-api (pyproject.toml)
 idna==3.20
     # via
     #   -c requirements.txt
@@ -66,10 +71,15 @@ pydantic==2.13.5
     #   -c requirements.txt
     #   fastapi
     #   isna-finance-api (pyproject.toml)
+    #   pydantic-settings
 pydantic-core==2.46.5
     # via
     #   -c requirements.txt
     #   pydantic
+pydantic-settings==2.15.0
+    # via
+    #   -c requirements.txt
+    #   isna-finance-api (pyproject.toml)
 pygments==2.21.0
     # via pytest
 pyproject-hooks==1.3.3
@@ -78,6 +88,10 @@ pyproject-hooks==1.3.3
     #   pip-tools
 pytest==9.1.1
     # via isna-finance-api (pyproject.toml)
+python-dotenv==1.2.3
+    # via
+    #   -c requirements.txt
+    #   pydantic-settings
 ruff==0.16.8
     # via isna-finance-api (pyproject.toml)
 starlette==1.6.0
@@ -97,6 +111,7 @@ typing-inspection==0.4.4
     #   -c requirements.txt
     #   fastapi
     #   pydantic
+    #   pydantic-settings
 uvicorn==0.53.0
     # via
     #   -c requirements.txt

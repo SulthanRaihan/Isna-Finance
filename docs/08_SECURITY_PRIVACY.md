@@ -168,3 +168,8 @@ applicable - AI extraction - file uploads - high-cost endpoints
 -   audit tested
 -   developer access reviewed
 -   AI provider privacy settings reviewed
+
+## M1 owner-only implementation
+
+See `14_M1_AUTH.md` for the approved email/password, single-owner access rules,
+profile provisioning, initial RLS, and `/api/v1/me` contract.

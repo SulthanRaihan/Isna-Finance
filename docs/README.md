@@ -73,3 +73,5 @@ Visual direction is defined in `13_VISUAL_DESIGN_SYSTEM.md`.
 The approved business-date clarification is recorded consistently in documents
 01, 03, 05, 06, and 10. Money In always follows the business-local date of
 `idr_received_at`, never the operational order date.
+
+For M1, also read `14_M1_AUTH.md` (approved owner-only login and visual reference).

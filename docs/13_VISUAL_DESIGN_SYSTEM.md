@@ -374,8 +374,14 @@ direction - soft-medium rounding - balanced information density -
 mobile-first - desktop supported - working brand `Isna Finance` -
 semantic token system - simple blue may be used provisionally
 
-Not frozen: - final primary hue - final logo - final brand identity -
+Not frozen: - final primary hue - final brand identity -
 decorative illustration style
 
 Those can be polished after functional UI review without rewriting
 product architecture.
+
+## Approved artwork and reference
+
+The supplied wallet mascot and wordmark are approved: `../web/public/brand/isna-finance-logo.png`.
+The supplied screen reference is `references/mobile-finance-reference.png`.
+See `14_M1_AUTH.md` for the visual implementation sequence.

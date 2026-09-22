@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { logout } from "@/app/auth-actions";
 import {
   Activity,
   CirclePlus,
@@ -76,6 +77,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           Isna Finance
         </Link>
         <Navigation />
+        <form action={logout} className="mt-6">
+          <button className="min-h-11 w-full rounded-xl border px-3 text-sm font-medium">
+            Keluar
+          </button>
+        </form>
         <p className="mt-auto text-xs leading-5 text-foreground-muted">
           A little less admin.
           <br />A little more clarity.
@@ -90,8 +96,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             Your workspace
           </span>
           <span className="rounded-lg bg-surface-muted px-3 py-1.5 text-xs font-medium text-foreground-muted">
-            Preview
+            Akses owner
           </span>
+          <form action={logout} className="md:hidden">
+            <button className="min-h-11 rounded-xl border px-3 text-sm">
+              Keluar
+            </button>
+          </form>
         </header>
         <main
           id="main-content"

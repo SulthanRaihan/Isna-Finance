@@ -23,6 +23,9 @@ jobs:
       - run: npm test
       - run: npm run format:check
       - run: npm run build
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: synthetic_server_only_canary_not_a_real_key
+      - run: npm run check:client-secrets
   api:
     runs-on: ubuntu-latest
     defaults:

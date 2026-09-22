@@ -1,18 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import HomePage from "@/app/page";
+import { describe, expect, it, vi } from "vitest";
+vi.mock("@/app/auth-actions", () => ({ logout: vi.fn() }));
+import { WorkspaceHome } from "@/components/workspace-home";
 import { AppShell } from "@/components/app-shell";
 
-describe("M0 shell", () => {
+describe("M1 shell", () => {
   it("provides an accessible preview and disables unfinished workflows", () => {
     render(
       <AppShell>
-        <HomePage />
+        <WorkspaceHome displayName="Synthetic Owner" />
       </AppShell>,
     );
     expect(
       screen.getByRole("heading", {
-        name: "Welcome to Isna Finance",
+        name: "Selamat datang, Synthetic Owner.",
         level: 1,
       }),
     ).toBeVisible();
@@ -32,6 +33,8 @@ describe("M0 shell", () => {
         ).toBeDisabled();
       }
     }
-    expect(screen.getByText(/Recording is not available yet/)).toBeVisible();
+    expect(
+      screen.getByText(/Belum ada fitur pencatatan transaksi/),
+    ).toBeVisible();
   });
 });

@@ -413,3 +413,8 @@ The user confirms/corrects the draft, then Next.js calls the ordinary
 -   idempotent retry does not duplicate record
 -   voided outflow disappears from Money Out
 -   AI extraction cannot post an order
+
+## M1 owner-only implementation
+
+See `14_M1_AUTH.md` for the approved email/password, single-owner access rules,
+profile provisioning, initial RLS, and `/api/v1/me` contract.

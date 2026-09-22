@@ -1,8 +1,8 @@
 # Supabase
 
-Reserved for Supabase PostgreSQL, Auth, and private Storage. M0 connects to no
-project and runs without credentials or Docker. No migrations or data are applied.
+M1 provides the profiles migration, explicit owner bootstrap, and rollback-only RLS
+verification script. Follow `../docs/M1_SETUP.md` in order. No live migration has been
+applied by the implementation agent. Use a development project and synthetic data.
 
-M1 adds Auth, the owner profile, token validation, and initial RLS policies.
-Later migrations must follow docs/10_POSTGRES_SCHEMA.md and be reviewed before
-application. Use a separate development project and synthetic data only.
+Public registration must be disabled. No service-role key is used by the apps.
+Future financial tables and storage remain outside M1.

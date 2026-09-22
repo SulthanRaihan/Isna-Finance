@@ -13,14 +13,18 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:client-secrets": "node scripts/check-client-secrets.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.116.0",
     "clsx": "2.1.1",
     "lucide-react": "1.47.0",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "0.0.1",
     "tailwind-merge": "3.7.0"
   },
   "devDependencies": {

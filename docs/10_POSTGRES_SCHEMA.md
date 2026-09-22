@@ -261,3 +261,8 @@ Saving this record atomically creates/updates exactly one canonical
 
 Team movements remain the reconciliation ledger and do not independently
 create team-fee outflows.
+
+## M1 owner-only implementation
+
+See `14_M1_AUTH.md` for the approved email/password, single-owner access rules,
+profile provisioning, initial RLS, and `/api/v1/me` contract.

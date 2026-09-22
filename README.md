@@ -1,21 +1,24 @@
 # Isna Finance
 
-Mobile-first CNY/IDR operations workspace. **M0 repository foundation only.**
-The shell is a public preview, not an authenticated or production-ready finance app.
-No financial records, authentication, database access, or AI features are implemented.
+Mobile-first CNY/IDR operations workspace. M0 is complete; M1 authentication code
+is implemented and requires Supabase migration/account activation before live use.
+Login is email/password for Isna only. No public signup or financial features.
+Start with [Supabase activation](docs/M1_SETUP.md).
 
 ## Repository
 
 - `docs/`: specification pack v5 and approved date clarification; start with `docs/README.md`.
 - `web/`: Next.js App Router, strict TypeScript, Tailwind CSS, adapted shadcn/ui Card, Lucide.
 - `api/`: FastAPI routes and Pydantic schemas; reserved service/repository directories.
-- `supabase/`: migration directory and empty seed placeholder; no database changes.
+- `supabase/`: reviewed-in-code profiles migration, explicit owner bootstrap, and RLS checks.
 - `ai-evaluation/`: reserved directories for M9, without AI dependencies or real data.
 
 ## Prerequisites
 
 Use Node.js 22 LTS (22.14 or newer within 22.x), npm 11, and Python 3.13.
-No Docker, Supabase account, or environment secrets are needed for M0.
+No Docker is required. M1 live login requires a development Supabase project,
+the public project configuration, and the activation steps in `docs/M1_SETUP.md`.
+Automated tests use synthetic mocked identities and need no Supabase credentials.
 Run commands from the repository root unless a `cd` is shown.
 
 ## Frontend
@@ -26,7 +29,8 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. Home is available; later workflow controls are disabled.
+Open http://localhost:3000. Anonymous visitors are redirected to `/login`.
+Only the provisioned owner can open Home; later workflow controls remain disabled.
 In another terminal, run quality checks from `web/`:
 
 ```sh
@@ -69,16 +73,21 @@ for `.\.venv\Scripts\python` in the remaining commands. Use `curl` for the HTTP 
 
 ## Configuration and secrets
 
-The root `.env.example` is a variable-name inventory, not a shared runtime file.
-`web/.env.example` contains only public variables reserved for M1; when needed,
-copy it to `web/.env.local`. `api/.env.example` contains backend-only names;
-M0 does not load an API dotenv file. M1 must define validated configuration loading.
-No variable is consumed or required by M0.
+The root `.env.example` is a variable-name inventory. Copy `web/.env.example` to
+`web/.env.local` and fill in `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Copy `api/.env.example` to `api/.env` and
+fill in `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` using the same public values.
+FastAPI validates configuration using Pydantic Settings. Environment files are ignored
+by Git; no project-specific credentials belong in committed examples.
 
-Never put the Supabase service-role key in the frontend or in a `NEXT_PUBLIC_*`
-variable. No service-role access is implemented. `.env` and local environment files
-are ignored by Git. Future development fixtures must be synthetic; do not commit
-real customer/account data, screenshots, tokens, or exports.
+No service-role key is needed. Both apps use user-context reads protected by RLS.
+Next.js handles Supabase sessions on the server in HttpOnly cookies; proxy refreshes
+sessions and server page guards revalidate identity and profile. `/api/v1/me` accepts
+a user's Bearer token and independently validates it with Supabase Auth. Its responses
+and auth pages are not cached. Health remains public even without configuration.
+
+Run `npm run check:client-secrets` after a frontend build. CI builds with a synthetic
+server-only canary and verifies it never appears in the browser bundle.
 
 ## Dependency maintenance
 
@@ -107,9 +116,9 @@ The two apps can be imported from the same Git repository as separate Vercel pro
 Use Node 22.x for the frontend and Python 3.13 for the API. Vercel detects FastAPI
 from the project metadata; runtime requirements are provided separately from dev tools.
 No Docker or custom server wrapper is required. Verify `/` on the frontend and
-`/api/v1/health` on the backend after a preview deployment. M0 makes no cross-origin
-API calls; M1 must configure trusted origins as needed when integrating authentication.
-No deployment is performed as part of M0. Production readiness remains M10.
+`/api/v1/health` on the backend after a preview deployment. M1 makes no browser-to-FastAPI cross-origin
+requests; session/profile checks run server-side. Add explicit trusted origins if a
+later milestone adds browser API access. No hosted deployment has been performed. Production readiness remains M10.
 
 References: [Next.js installation](https://nextjs.org/docs/app/getting-started/installation),
 [FastAPI on Vercel](https://vercel.com/docs/frameworks/backend/fastapi),
@@ -117,10 +126,10 @@ References: [Next.js installation](https://nextjs.org/docs/app/getting-started/i
 
 ## Scope and next milestone
 
-Engineering choices: two independent app roots; public static preview; health at
-`GET /api/v1/health`; no database readiness check or financial demo data.
-See `docs/M0_REPORT.md` for verification and specification notes.
+See `docs/M0_REPORT.md` for historical foundation verification and `docs/M1_SETUP.md`
+for the current activation and acceptance checklist. `docs/14_M1_AUTH.md` records
+approved authentication decisions and visual direction.
 
-M1 requires a separate authorization: Supabase Auth, a protected application shell,
-FastAPI token verification, the owner profile, initial RLS, and tests proving anonymous
-denial, authorized owner access, and absence of service-role secrets in the browser.
+M1 live acceptance still requires the profiles migration, RLS verification, owner
+bootstrap, and an actual owner login/logout check. M2 (customers/accounts/teams) is
+not started. Financial recognition rules are unchanged.

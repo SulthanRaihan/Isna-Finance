@@ -1,0 +1,1 @@
+-- M0 intentionally has no schema or seed records. Future development seeds must be synthetic.

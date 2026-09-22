@@ -1,0 +1,426 @@
+# Detailed Wireframes v1
+
+These are functional low-fidelity wireframes for implementation. Visual
+styling may evolve; information hierarchy and workflow should remain
+consistent.
+
+## Mobile navigation
+
+``` text
+┌────────────────────────────────┐
+│          PAGE CONTENT          │
+│                                │
+│                                │
+├────────────────────────────────┤
+│  Home   Orders    ＋   Activity │
+│                         More   │
+└────────────────────────────────┘
+```
+
+The center `+` opens Quick Order.
+
+------------------------------------------------------------------------
+
+# W01 - Home / Dashboard
+
+``` text
+┌────────────────────────────────┐
+│ Good evening                   │
+│ 20 Sep 2026              [⌄]   │
+│                                │
+│ Receiving today                │
+│ BCA ••••4821  Default      >   │
+│ + 1 other active account       │
+│                                │
+│ ┌────────────┐ ┌────────────┐  │
+│ │ Customers  │ │ Total CNY  │  │
+│ │     17     │ │  ¥48,250   │  │
+│ └────────────┘ └────────────┘  │
+│                                │
+│ Money In                       │
+│ Rp xx.xxx.xxx                  │
+│                                │
+│ Money Out                      │
+│ Rp xx.xxx.xxx                  │
+│                                │
+│ Profit                         │
+│ Rp x.xxx.xxx                   │
+│                                │
+│ Orders needing attention       │
+│ 2 Awaiting Payment         >   │
+│ 3 Ready to Send           >   │
+│                                │
+│ Reconciliation                │
+│ Team B remaining ¥1,000    >   │
+│                                │
+├────────────────────────────────┤
+│ Home Orders    ＋ Activity More│
+└────────────────────────────────┘
+```
+
+Primary goal: tell Isna what happened today and what still needs action.
+
+------------------------------------------------------------------------
+
+# W02 - Quick Order
+
+``` text
+┌────────────────────────────────┐
+│ ← New Order                    │
+│                                │
+│ Customer                       │
+│ [ Search customer...       ⌄ ] │
+│                                │
+│ CNY                            │
+│ [ 10,000                     ] │
+│                                │
+│ Rate                           │
+│ [ 2,647                      ] │
+│                                │
+│ Expected IDR                   │
+│ Rp26,470,000                   │
+│ calculated automatically       │
+│                                │
+│ Receiving account              │
+│ [ BCA ••••4821   Default   ⌄ ] │
+│                                │
+│ Note (optional)                │
+│ [                            ] │
+│                                │
+│ [        Save Order          ] │
+│                                │
+│ Phase 2: Import from Chat 📷   │
+└────────────────────────────────┘
+```
+
+UX requirements: - customer search prioritizes recent/recurring
+customers - account is prefilled - numeric keyboard on mobile - expected
+IDR updates immediately as preview - backend recalculates on save - save
+should be reachable without excessive scrolling
+
+------------------------------------------------------------------------
+
+# W03 - Order Saved / Fast Actions
+
+``` text
+┌────────────────────────────────┐
+│ ✓ Order created                │
+│                                │
+│ Gaby                           │
+│ ¥10,000 × 2,647                │
+│ Rp26,470,000                   │
+│                                │
+│ Payment                        │
+│ ○ Awaiting IDR                 │
+│ [ Mark IDR Received ]          │
+│                                │
+│ RMB                            │
+│ ○ Not sent                     │
+│ [ Mark RMB Sent ]              │
+│                                │
+│ [ + Add Another Order ]        │
+│ [ View Order ]                 │
+└────────────────────────────────┘
+```
+
+This supports rapid consecutive entry.
+
+------------------------------------------------------------------------
+
+# W04 - Orders
+
+``` text
+┌────────────────────────────────┐
+│ Orders                         │
+│ [ Search...                  ] │
+│                                │
+│ All | Awaiting | Ready | Done  │
+│                                │
+│ Gaby                           │
+│ ¥10,000  Rp26,470,000          │
+│ READY TO SEND              >   │
+│                                │
+│ Andrew                         │
+│ ¥3,000   Rp7,944,000           │
+│ AWAITING PAYMENT           >   │
+│                                │
+│ David                          │
+│ ¥10,000  Rp26,470,000          │
+│ COMPLETED                  >   │
+├────────────────────────────────┤
+│ Home Orders    ＋ Activity More│
+└────────────────────────────────┘
+```
+
+Use status text + icon; do not rely on color alone.
+
+------------------------------------------------------------------------
+
+# W05 - Order Detail
+
+``` text
+┌────────────────────────────────┐
+│ ← Order Detail          [•••]  │
+│                                │
+│ Gaby                           │
+│ ¥10,000                        │
+│ Rate 2,647                     │
+│ Expected IDR Rp26,470,000      │
+│                                │
+│ Receiving account              │
+│ BCA ••••4821                   │
+│                                │
+│ Payment                        │
+│ ✓ IDR received 10:30           │
+│                                │
+│ Fulfillment                    │
+│ ○ RMB not sent                 │
+│ [ Mark RMB Sent ]              │
+│                                │
+│ Team allocation                │
+│ Team B  ¥10,000            >   │
+│                                │
+│ History                        │
+│ Created 09:12                  │
+│ Payment marked 10:30           │
+└────────────────────────────────┘
+```
+
+`•••` may expose controlled edit/history, not destructive direct delete.
+
+------------------------------------------------------------------------
+
+# W06 - Activity Hub
+
+``` text
+┌────────────────────────────────┐
+│ Activity                       │
+│                                │
+│ [ Team Activity             > ]│
+│ RMB handled, fee, ledger       │
+│                                │
+│ [ ATM / Card                > ]│
+│ Actual CNY and fee             │
+│                                │
+│ [ RMB Purchase / Exchange   > ]│
+│ CNY, rate, IDR cost            │
+│                                │
+│ [ Other Expense             > ]│
+│ Operational outflow            │
+│                                │
+│ Today's Money Out              │
+│ Rp xx.xxx.xxx                  │
+└────────────────────────────────┘
+```
+
+------------------------------------------------------------------------
+
+# W07 - Team Detail
+
+``` text
+┌────────────────────────────────┐
+│ ← Team B                       │
+│ 20 Sep 2026                    │
+│                                │
+│ Received        ¥13,000        │
+│ Distributed     ¥12,000        │
+│ Remaining        ¥1,000        │
+│                                │
+│ Actual handled                 │
+│ [ 13,000                    ]  │
+│ Fee rate                       │
+│ [ 2 / CNY                   ]  │
+│ Fee             Rp26,000       │
+│                                │
+│ Movements                      │
+│ +13,000 Received               │
+│ -10,000 David                  │
+│ -1,000  Nopi                   │
+│ -1,000  Sugik                  │
+│                                │
+│ [ + Add Movement ]             │
+│ [ Save Daily Activity ]        │
+└────────────────────────────────┘
+```
+
+The fee posting is generated exactly once from saved daily activity.
+
+------------------------------------------------------------------------
+
+# W08 - ATM / Card Activity
+
+``` text
+┌────────────────────────────────┐
+│ ← ATM / Card Activity          │
+│                                │
+│ Account/Card                   │
+│ [ BCA ••••4821             ⌄ ] │
+│                                │
+│ Actual CNY handled             │
+│ [ 5,600                     ]  │
+│                                │
+│ Fee / CNY                      │
+│ [ 1.7                       ]  │
+│                                │
+│ Calculated fee                 │
+│ Rp9,520                        │
+│                                │
+│ [ Save Activity ]              │
+└────────────────────────────────┘
+```
+
+------------------------------------------------------------------------
+
+# W09 - Add Money Out
+
+``` text
+┌────────────────────────────────┐
+│ ← Add Money Out                │
+│                                │
+│ Type                           │
+│ [ RMB Purchase / Exchange  ⌄ ] │
+│                                │
+│ CNY                            │
+│ [ 42,090                    ]  │
+│ Rate                           │
+│ [ 2,618.45                  ]  │
+│                                │
+│ Calculated IDR                 │
+│ Rp110,210,560.50               │
+│                                │
+│ Description                    │
+│ [ RMB purchase              ]  │
+│                                │
+│ [ Save ]                       │
+└────────────────────────────────┘
+```
+
+For `Other Expense`, show direct IDR amount instead of CNY/rate.
+
+------------------------------------------------------------------------
+
+# W10 - Daily Recap
+
+``` text
+┌────────────────────────────────┐
+│ ← Daily Recap                  │
+│ 20 Sep 2026              [⌄]   │
+│                                │
+│ 17 customers   ¥48,250 CNY     │
+│                                │
+│ MONEY IN                       │
+│ Customer orders                │
+│ Rp xxx.xxx.xxx                 │
+│                                │
+│ MONEY OUT                      │
+│ RMB Purchase    Rp ...         │
+│ Team Fees       Rp ...         │
+│ ATM Fees        Rp ...         │
+│ Other           Rp ...         │
+│ -----------------------------  │
+│ Total Out        Rp ...        │
+│                                │
+│ PROFIT                         │
+│ Rp x.xxx.xxx                   │
+│                                │
+│ TEAM BALANCES                  │
+│ Team A ¥0                      │
+│ Team B ¥1,000  ⚠              │
+│ Team C ¥0                      │
+│                                │
+│ UNFINISHED                     │
+│ 2 awaiting payment             │
+│ 3 ready to send                │
+└────────────────────────────────┘
+```
+
+This is the primary replacement for nightly Excel recap.
+
+------------------------------------------------------------------------
+
+# W11 - Accounts / Today's Accounts
+
+``` text
+┌────────────────────────────────┐
+│ ← Receiving Accounts           │
+│                                │
+│ Today                          │
+│ ✓ BCA ••••4821       DEFAULT   │
+│ ✓ SeaBank ••••7721             │
+│                                │
+│ [ Change Today's Accounts ]    │
+│                                │
+│ All Accounts                   │
+│ BCA ••••4821              >    │
+│ SeaBank ••••7721          >    │
+│ BNI ••••2910              >    │
+│ ...                            │
+│                                │
+│ [ + Add Account ]              │
+└────────────────────────────────┘
+```
+
+------------------------------------------------------------------------
+
+# W12 - Customers
+
+``` text
+┌────────────────────────────────┐
+│ ← Customers                    │
+│ [ Search customer...         ] │
+│                                │
+│ Recent                         │
+│ Gaby                       >   │
+│ Andrew                     >   │
+│ David                      >   │
+│                                │
+│ All                            │
+│ ...                            │
+│                                │
+│ [ + Add Customer ]             │
+└────────────────────────────────┘
+```
+
+Keep customer profile intentionally minimal.
+
+------------------------------------------------------------------------
+
+# W13 - AI Import Preview (Phase 2)
+
+``` text
+┌────────────────────────────────┐
+│ ← Import from Chat             │
+│                                │
+│ [ screenshot preview ]         │
+│                                │
+│ AI found                       │
+│ Customer  Gaby        94%      │
+│ CNY       10,000      99%      │
+│ Rate      2,647       98%      │
+│                                │
+│ Please verify before saving.   │
+│                                │
+│ [ Edit Fields ]                │
+│ [ Confirm & Create Order ]     │
+└────────────────────────────────┘
+```
+
+The confirmation action calls the ordinary order endpoint. AI never
+directly writes to the ledger.
+
+------------------------------------------------------------------------
+
+# Desktop behavior
+
+Desktop uses the same information architecture with a left sidebar and
+wider cards/tables. Do not create a separate desktop workflow.
+
+# Accessibility / usability
+
+-   large touch targets
+-   numeric keypad for CNY/rate/fee
+-   status not communicated by color alone
+-   currency labels always visible
+-   confirmation for material financial actions
+-   loading/success/error states
+-   preserve entered form values after recoverable API errors

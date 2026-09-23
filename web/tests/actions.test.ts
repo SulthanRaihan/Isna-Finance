@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   signIn: vi.fn(),
   signOut: vi.fn(),
@@ -26,7 +26,9 @@ function form(
   data.set("password", password);
   return data;
 }
+afterEach(() => vi.restoreAllMocks());
 beforeEach(() => {
+  vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.clearAllMocks();
   mocks.signIn.mockResolvedValue({ error: null });
   mocks.signOut.mockResolvedValue({ error: null });
@@ -59,6 +61,37 @@ describe("auth actions", () => {
       /private-provider-detail|synthetic-only-password/,
     );
     expect(mocks.redirect).not.toHaveBeenCalled();
+  });
+  it("does not blame credentials for connection failures", async () => {
+    mocks.signIn.mockResolvedValue({ error: { status: 0 } });
+    expect((await login({}, form())).error).toMatch(/belum dapat dihubungi/);
+    expect(mocks.access).not.toHaveBeenCalled();
+  });
+  it("logs only allowlisted error categories, never provider details", async () => {
+    mocks.signIn.mockResolvedValue({
+      error: {
+        code: "email_not_confirmed",
+        status: 400,
+        message: "private-detail",
+      },
+    });
+    await login({}, form());
+    expect(console.warn).toHaveBeenLastCalledWith("[auth] sign_in_failed", {
+      code: "email_not_confirmed",
+      status: 400,
+    });
+    mocks.signIn.mockResolvedValue({
+      error: {
+        code: "unexpected-private-value",
+        status: 500,
+        message: "private-detail",
+      },
+    });
+    await login({}, form());
+    expect(console.warn).toHaveBeenLastCalledWith("[auth] sign_in_failed", {
+      code: "other",
+      status: 500,
+    });
   });
   it("clears the local session for a non-owner", async () => {
     mocks.access.mockResolvedValue({ status: "forbidden" });

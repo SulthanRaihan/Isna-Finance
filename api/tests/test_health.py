@@ -13,8 +13,7 @@ def test_health_is_public_and_returns_only_liveness():
     assert response.json() == {"status": "ok"}
 
 
-def test_no_business_routes_are_exposed():
-    assert set(app.openapi()["paths"]) == {"/api/v1/health", "/api/v1/me"}
+def test_no_order_routes_are_exposed():
     assert client.post("/api/v1/orders", json={}).status_code == 404
 
 

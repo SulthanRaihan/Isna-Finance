@@ -172,3 +172,24 @@ order merely because a request is retried.
 8.  Team/ATM linked activity contributes to Money Out exactly once.
 9.  Profit equals canonical Money In minus canonical Money Out.
 10. Team balance is independent from profit.
+
+## Business timezone decision (2026-09-23)
+
+The user delegated the timezone choice. The initial configured business timezone
+is `Asia/Jakarta` (WIB, UTC+7), representing Indonesian operations. This is an
+explicit product default, not inferred from the developer's or browser's timezone.
+Set `BUSINESS_TIMEZONE` on the API to override it with a valid IANA timezone.
+An invalid setting must fail visibly, never fall back to machine-local time.
+
+Store event timestamps as UTC/offset-aware timestamps. Convert them to the
+configured business timezone when deriving a business-local date. Explicit
+`business_date` values remain calendar dates and are not shifted during conversion.
+Money In still derives exclusively from `idr_received_at`, never the order date.
+A business day rolls over at local midnight. Changing this setting after financial
+records exist requires a deliberate reporting-impact review; it is not a casual
+per-user display preference. M2 obtains today's date from the API so all
+clients use the same date.
+
+M2 stores the configured timezone in `private.business_settings` for database
+enforcement. API `BUSINESS_TIMEZONE` must match; mismatches fail closed.
+See `15_M2_MASTER_DATA.md` and `M2_SETUP.md` for configuration details.

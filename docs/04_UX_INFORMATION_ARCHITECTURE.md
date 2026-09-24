@@ -96,3 +96,17 @@ Flow: Screenshot -\> AI draft -\> field-level preview/confidence -\>
 user corrects/confirms -\> same normal Create Order path.
 
 There must not be a separate AI-only ledger path.
+
+## M2 account deactivation rule (approved 2026-09-23)
+
+- Deactivation is soft (`is_active=false`); no hard-delete endpoint is permitted.
+- Reject deactivation if ANY `daily_account_assignments` row references the account
+  on today's or a future business date, using the configured business timezone.
+- Return all conflicting assignments, including their business date and default
+  status. The UI asks the user to explicitly remove/change those daily assignments.
+- Never automatically select, clear, or change a default account as a side effect
+  of account deactivation. Assignment replacement remains a separate explicit action.
+- Historical assignments and transactions remain unchanged.
+- An inactive account is not selectable for new assignments or new orders.
+- Deactivation is allowed after all current/future references are removed/changed.
+- Protect the check and update atomically, including concurrent assignment changes.

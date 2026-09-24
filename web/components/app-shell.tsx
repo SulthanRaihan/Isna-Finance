@@ -12,33 +12,51 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type NavigationItem = { label: string; icon: LucideIcon; available: boolean };
+type NavigationItem = {
+  label: string;
+  icon: LucideIcon;
+  available: boolean;
+  href?: string;
+};
 const navigation: NavigationItem[] = [
   { label: "Home", icon: House, available: true },
   { label: "Orders", icon: ListOrdered, available: false },
   { label: "Quick Order", icon: CirclePlus, available: false },
   { label: "Activity", icon: Activity, available: false },
-  { label: "More", icon: MoreHorizontal, available: false },
+  { label: "More", icon: MoreHorizontal, available: true, href: "/more" },
 ];
 
-function Navigation({ mobile = false }: { mobile?: boolean }) {
+function Navigation({
+  mobile = false,
+  activePath = "/",
+}: {
+  mobile?: boolean;
+  activePath?: string;
+}) {
   return (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
       className={cn(mobile ? "grid grid-cols-5 gap-1" : "space-y-2")}
     >
-      {navigation.map(({ label, icon: Icon, available }) => {
+      {navigation.map(({ label, icon: Icon, available, href }) => {
         const classes = cn(
           "flex min-h-12 items-center gap-3 rounded-xl px-3 text-sm font-medium",
           mobile
             ? "flex-col justify-center gap-1 px-1 py-2 text-[11px]"
             : "w-full",
           available
-            ? "bg-surface-muted text-primary"
+            ? (href ?? "/") === activePath
+              ? "bg-surface-muted text-primary"
+              : "text-foreground-muted"
             : "cursor-not-allowed text-foreground-muted",
         );
         return available ? (
-          <Link key={label} href="/" aria-current="page" className={classes}>
+          <Link
+            key={label}
+            href={href ?? "/"}
+            aria-current={(href ?? "/") === activePath ? "page" : undefined}
+            className={classes}
+          >
             <Icon size={20} aria-hidden="true" />
             {label}
           </Link>
@@ -59,7 +77,13 @@ function Navigation({ mobile = false }: { mobile?: boolean }) {
   );
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  activePath = "/",
+}: {
+  children: ReactNode;
+  activePath?: string;
+}) {
   return (
     <>
       <a
@@ -76,7 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Wallet aria-hidden="true" className="text-primary" size={24} />
           Isna Finance
         </Link>
-        <Navigation />
+        <Navigation activePath={activePath} />
         <form action={logout} className="mt-6">
           <button className="min-h-11 w-full rounded-xl border px-3 text-sm font-medium">
             Keluar
@@ -113,7 +137,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
       <div className="fixed inset-x-0 bottom-0 border-t bg-surface px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
-        <Navigation mobile />
+        <Navigation mobile activePath={activePath} />
       </div>
     </>
   );

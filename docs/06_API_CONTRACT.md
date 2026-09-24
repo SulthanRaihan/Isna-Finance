@@ -418,3 +418,28 @@ The user confirms/corrects the draft, then Next.js calls the ordinary
 
 See `14_M1_AUTH.md` for the approved email/password, single-owner access rules,
 profile provisioning, initial RLS, and `/api/v1/me` contract.
+
+Business timezone: initial explicit default `Asia/Jakarta`; see the dated timezone
+decision in `05_FINANCIAL_ENGINE.md`. Do not use device-local dates.
+
+## M2 account deactivation rule (approved 2026-09-23)
+
+- Deactivation is soft (`is_active=false`); no hard-delete endpoint is permitted.
+- Reject deactivation if ANY `daily_account_assignments` row references the account
+  on today's or a future business date, using the configured business timezone.
+- Return all conflicting assignments, including their business date and default
+  status. The UI asks the user to explicitly remove/change those daily assignments.
+- Never automatically select, clear, or change a default account as a side effect
+  of account deactivation. Assignment replacement remains a separate explicit action.
+- Historical assignments and transactions remain unchanged.
+- An inactive account is not selectable for new assignments or new orders.
+- Deactivation is allowed after all current/future references are removed/changed.
+- Protect the check and update atomically, including concurrent assignment changes.
+
+`PATCH /accounts/{account_id}` requesting `is_active=false` returns HTTP 409:
+```json
+{"error":{"code":"ACCOUNT_ASSIGNED","message":"Resolve current/future assignments before deactivating this account.","fields":{"conflicting_assignments":[{"business_date":"2026-09-23","account_id":"synthetic-uuid","is_default":true}]}}}
+```
+No writes occur on conflict. A daily-account replacement is atomic. An empty
+active list with a null default explicitly clears that date; the default, if
+present, must belong to the selected active accounts. No implicit carry-forward.

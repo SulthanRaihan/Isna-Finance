@@ -1,9 +1,8 @@
 # Isna Finance
 
-Mobile-first CNY/IDR operations workspace. M0 is complete; M1 authentication code
-is implemented and requires Supabase migration/account activation before live use.
-Login is email/password for Isna only. No public signup or financial features.
-Start with [Supabase activation](docs/M1_SETUP.md).
+Mobile-first CNY/IDR operations workspace. Owner login is active; M2 master-data
+code is ready for its Supabase migration and live acceptance. No public signup or
+financial posting features. Start with [M2 activation](docs/M2_SETUP.md).
 
 ## Repository
 
@@ -130,6 +129,20 @@ See `docs/M0_REPORT.md` for historical foundation verification and `docs/M1_SETU
 for the current activation and acceptance checklist. `docs/14_M1_AUTH.md` records
 approved authentication decisions and visual direction.
 
-M1 live acceptance still requires the profiles migration, RLS verification, owner
-bootstrap, and an actual owner login/logout check. M2 (customers/accounts/teams) is
-not started. Financial recognition rules are unchanged.
+M1 owner login, refresh, logout and post-logout denial were verified live. Hosted
+RLS and direct bearer API verification remain distinct from mocked tests. M2
+(customers/accounts/teams) requires its migration and live acceptance in
+`docs/M2_SETUP.md`. Financial recognition rules are unchanged.
+
+## Business timezone
+
+The API uses `BUSINESS_TIMEZONE=Asia/Jakarta` (WIB) as an explicit initial
+business calendar. Set a valid IANA name in `api/.env` and the API deployment
+environment; restart after changes. Do not duplicate it as a device-local or
+per-user date preference. The M2 daily-account UI reads the API business date from the database clock.
+The private database timezone and API configuration must match; see docs/M2_SETUP.md.
+The current change adds the tested calendar foundation, not financial recognition
+endpoints. Dates already explicitly selected by the user are not timezone-shifted.
+
+`tzdata` supplies IANA data on Windows, following the
+[Python zoneinfo guidance](https://docs.python.org/3/library/zoneinfo.html#data-sources).

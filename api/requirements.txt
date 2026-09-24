@@ -57,5 +57,7 @@ typing-inspection==0.4.4
     #   fastapi
     #   pydantic
     #   pydantic-settings
+tzdata==2026.4
+    # via isna-finance-api (pyproject.toml)
 uvicorn==0.53.0
     # via isna-finance-api (pyproject.toml)

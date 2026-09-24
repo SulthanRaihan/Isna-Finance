@@ -61,3 +61,11 @@ Disable public signup, apply migration, run synthetic SQL/RLS checks, create the
 owner Auth account, bootstrap its exact UID, and verify live owner login/logout
 and API authorization. Do not send a password to chat. Master data belongs to M2
 and has not been implemented.
+
+## Follow-up verification, 2026-09-23
+
+User reported applying M1 setup. Live owner login succeeded after restarting the
+Next.js process with network permission (sandboxed outbound access returned EACCES).
+Agent verified owner shell after refresh, logout, and protected-home redirect after
+logout. Public signup is disabled. Hosted SQL/RLS checks and direct live bearer API
+acceptance were not independently rerun; earlier mocked-test limitations still apply.

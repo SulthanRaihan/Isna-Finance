@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NotebookPen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -34,6 +35,12 @@ export function WorkspaceHome({ displayName }: { displayName: string }) {
           </p>
         </CardContent>
       </Card>
+      <Link
+        href="/more"
+        className="inline-flex min-h-12 items-center rounded-xl bg-primary px-5 text-primary-foreground"
+      >
+        Kelola data operasional
+      </Link>
     </div>
   );
 }

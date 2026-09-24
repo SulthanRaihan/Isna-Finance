@@ -51,4 +51,15 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/", "/login", "/access"] };
+export const config = {
+  matcher: [
+    "/",
+    "/login",
+    "/access",
+    "/more",
+    "/customers",
+    "/accounts",
+    "/teams",
+    "/daily-accounts",
+  ],
+};

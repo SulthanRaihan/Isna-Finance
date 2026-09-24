@@ -27,7 +27,11 @@ describe("M1 shell", () => {
         "href",
         "/",
       );
-      for (const name of ["Orders", "Quick Order", "Activity", "More"]) {
+      expect(nav.getByRole("link", { name: "More" })).toHaveAttribute(
+        "href",
+        "/more",
+      );
+      for (const name of ["Orders", "Quick Order", "Activity"]) {
         expect(
           nav.getByRole("button", { name: `${name} (coming soon)` }),
         ).toBeDisabled();

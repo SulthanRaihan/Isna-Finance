@@ -6,3 +6,7 @@ applied by the implementation agent. Use a development project and synthetic dat
 
 Public registration must be disabled. No service-role key is used by the apps.
 Future financial tables and storage remain outside M1.
+
+M2 adds master-data tables and atomic daily assignments. Follow `../docs/M2_SETUP.md`.
+The database enforces the frozen deactivation rule even on direct account updates.
+Local disposable tests run with `cd tests`, `npm ci`, `npm test`; no Docker needed.

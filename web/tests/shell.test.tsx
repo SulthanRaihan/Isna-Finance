@@ -31,14 +31,12 @@ describe("M1 shell", () => {
         "href",
         "/more",
       );
-      for (const name of ["Orders", "Quick Order", "Activity"]) {
+      for (const name of ["Activity"]) {
         expect(
           nav.getByRole("button", { name: `${name} (coming soon)` }),
         ).toBeDisabled();
       }
     }
-    expect(
-      screen.getByText(/Belum ada fitur pencatatan transaksi/),
-    ).toBeVisible();
+    expect(screen.getByText(/Aktivitas tim dan rekap harian/)).toBeVisible();
   });
 });

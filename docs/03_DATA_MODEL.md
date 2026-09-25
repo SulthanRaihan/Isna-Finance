@@ -165,3 +165,20 @@ decision in `05_FINANCIAL_ENGINE.md`. Do not use device-local dates.
 - An inactive account is not selectable for new assignments or new orders.
 - Deactivation is allowed after all current/future references are removed/changed.
 - Protect the check and update atomically, including concurrent assignment changes.
+
+## M3 frozen order rules (2026-09-25)
+
+- Authoritative persisted IDR calculations use Python Decimal, ROUND_HALF_UP,
+  quantized to two decimal places (100.005 becomes 100.01). Frontend values are
+  previews only. Money In still uses the business-local date of idr_received_at.
+- customer_id, business_date, cny_amount, customer_rate and receiving_account_id
+  can change only while payment_status=awaiting AND fulfillment_status=pending.
+  Either received payment OR sent RMB locks all five fields. note remains editable.
+  All permitted changes are audited. Realized corrections require a future explicit
+  correction/void workflow; M3 never silently changes financial history.
+- An order account must be active AND assigned in daily_account_assignments for
+  the order business_date. The daily default is only a preselection; an explicit
+  override may choose another assigned active account. Order creation never
+  creates or changes daily assignments.
+
+M3 implementation details and error behavior: see 16_M3_ORDERS.md.

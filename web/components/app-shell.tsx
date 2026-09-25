@@ -20,8 +20,13 @@ type NavigationItem = {
 };
 const navigation: NavigationItem[] = [
   { label: "Home", icon: House, available: true },
-  { label: "Orders", icon: ListOrdered, available: false },
-  { label: "Quick Order", icon: CirclePlus, available: false },
+  { label: "Orders", icon: ListOrdered, available: true, href: "/orders" },
+  {
+    label: "Quick Order",
+    icon: CirclePlus,
+    available: true,
+    href: "/orders/new",
+  },
   { label: "Activity", icon: Activity, available: false },
   { label: "More", icon: MoreHorizontal, available: true, href: "/more" },
 ];

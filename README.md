@@ -1,8 +1,8 @@
 # Isna Finance
 
-Mobile-first CNY/IDR operations workspace. Owner login is active; M2 master-data
-is active and its core synthetic live acceptance checks have passed. No public signup or
-financial posting features. Start with [M2 activation](docs/M2_SETUP.md).
+Mobile-first CNY/IDR operations workspace. M1 login and M2 master data are active.
+M3 Orders code is ready for migration and shared synthetic acceptance; see
+[M3 setup](docs/M3_SETUP.md). No public signup, team/outflow posting or AI features.
 
 ## Repository
 

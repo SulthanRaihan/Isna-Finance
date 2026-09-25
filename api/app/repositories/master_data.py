@@ -59,9 +59,29 @@ class MasterData:
                     "Resolve current/future assignments before deactivating this account.",
                     {"conflicting_assignments": assignments},
                 )
+            domain = data.get("message")
+            if code == "P0001" and domain in {
+                "ORDER_LOCKED",
+                "STATE_CONFLICT",
+                "STALE_ORDER",
+                "IDEMPOTENCY_CONFLICT",
+                "ACCOUNT_NOT_ASSIGNED",
+                "INVALID_ORDER",
+                "NOT_FOUND",
+            }:
+                status = (
+                    404
+                    if domain == "NOT_FOUND"
+                    else 422
+                    if domain in {"ACCOUNT_NOT_ASSIGNED", "INVALID_ORDER"}
+                    else 409
+                )
+                raise DataError(
+                    status, domain, "Order request rejected; review the current order and inputs."
+                )
             if code == "23505":
                 raise DataError(409, "DUPLICATE", "A record with this unique value already exists.")
-            if code in ("22023", "23514", "23503", "23502"):
+            if code in ("22023", "23514", "23503", "23502", "22003", "22007", "22008"):
                 raise DataError(
                     422, "VALIDATION_ERROR", "Check the selected accounts and input values."
                 )

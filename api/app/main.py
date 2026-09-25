@@ -4,14 +4,16 @@ from fastapi.responses import JSONResponse
 
 from app.api.health import router as health_router
 from app.api.master_data import router as master_router
+from app.api.orders import router as orders_router
 from app.api.profile import router as profile_router
 from app.core.auth import AuthError
 from app.repositories.master_data import DataError
 
-app = FastAPI(title="Isna Finance API", version="0.2.0")
+app = FastAPI(title="Isna Finance API", version="0.3.0")
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(profile_router, prefix="/api/v1")
 app.include_router(master_router, prefix="/api/v1")
+app.include_router(orders_router, prefix="/api/v1")
 
 
 @app.exception_handler(AuthError)

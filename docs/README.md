@@ -77,3 +77,5 @@ The approved business-date clarification is recorded consistently in documents
 For M1, also read `14_M1_AUTH.md` (approved owner-only login and visual reference).
 
 For M2 also read `15_M2_MASTER_DATA.md`.
+
+For M3 also read `16_M3_ORDERS.md` (approved rounding, editing and account rules).

@@ -27,14 +27,20 @@ export function WorkspaceHome({ displayName }: { displayName: string }) {
         </CardHeader>
         <CardContent>
           <p className="max-w-lg text-sm leading-6 text-foreground-muted">
-            Login pribadi sudah tersedia. Pencatatan order, aktivitas, dan rekap
-            harian akan hadir pada tahap berikutnya.
+            Catat order pelanggan, konfirmasi IDR diterima, dan tandai RMB yang
+            sudah dikirim melalui Quick Order.
           </p>
           <p className="mt-4 text-xs text-foreground-muted">
-            Belum ada fitur pencatatan transaksi.
+            Aktivitas tim dan rekap harian tersedia pada tahap berikutnya.
           </p>
         </CardContent>
       </Card>
+      <Link
+        href="/orders/new"
+        className="inline-flex min-h-12 items-center rounded-xl bg-primary px-5 text-primary-foreground"
+      >
+        + Quick Order
+      </Link>
       <Link
         href="/more"
         className="inline-flex min-h-12 items-center rounded-xl bg-primary px-5 text-primary-foreground"

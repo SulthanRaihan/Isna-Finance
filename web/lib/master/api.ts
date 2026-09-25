@@ -14,6 +14,7 @@ export async function api<T>(
   path: string,
   method = "GET",
   body?: unknown,
+  idempotencyKey?: string,
 ): Promise<T> {
   const base = process.env.API_BASE_URL;
   if (!base) throw new ApiError("API_UNAVAILABLE", 503);
@@ -41,6 +42,7 @@ export async function api<T>(
       headers: {
         Authorization: `Bearer ${data.session.access_token}`,
         "Content-Type": "application/json",
+        ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });

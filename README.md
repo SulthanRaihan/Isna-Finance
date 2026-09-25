@@ -1,7 +1,7 @@
 # Isna Finance
 
 Mobile-first CNY/IDR operations workspace. Owner login is active; M2 master-data
-code is ready for its Supabase migration and live acceptance. No public signup or
+is active and its core synthetic live acceptance checks have passed. No public signup or
 financial posting features. Start with [M2 activation](docs/M2_SETUP.md).
 
 ## Repository

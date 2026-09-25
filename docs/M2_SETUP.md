@@ -1,7 +1,8 @@
 # M2 activation and checks
 
-The code and local disposable SQL tests are ready. The M2 migration has NOT been
-applied to the user's Supabase project by the agent. No live master data was added.
+The user applied the M2 migration with RLS enabled. Core synthetic live checks
+passed on 2026-09-25; see M2_REPORT.md for evidence and remaining verification limits.
+Do not rerun the migration on this project. The steps below are for a fresh setup.
 
 ## Apply the migration
 

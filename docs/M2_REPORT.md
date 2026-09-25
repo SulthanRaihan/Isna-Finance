@@ -2,9 +2,9 @@
 
 ## Status and scope
 
-Master-data code is implemented. Hosted activation and end-to-end persistence
-acceptance are pending the M2 Supabase migration. No M3 order or financial posting
-features are present. No real customer/account data was added during development.
+Master-data code is implemented and the user has applied the hosted migration.
+Core owner workflows passed live synthetic acceptance on 2026-09-25. No M3 order
+or financial posting features are present. No real customer/account data was added.
 
 ## Frozen decisions, documented before implementation
 
@@ -57,11 +57,49 @@ business date of idr_received_at, not orders.business_date.
 - Existing upstream Starlette test-client deprecation warnings remain. An elevated
   run also reported a local pytest cache permission warning; tests still passed.
 
+## Live acceptance - 2026-09-25
+
+- Owner created, searched and edited a synthetic customer, created two masked
+  accounts, and created a team with exact rate 1.700001.
+- Daily choices persisted across refresh. On September 25 (Asia/Jakarta), account
+  A was selected on September 25 and 26. Deactivation returned HTTP 409 and both
+  conflicting dates; account A stayed active. No default was silently assigned.
+- Both dates were explicitly cleared via the UI (HTTP 200). Deactivation then
+  returned HTTP 200 and account A displayed Nonaktif.
+- September 24 still contained both accounts and retained A as its historical
+  default. New choices for September 27 excluded A and kept no default.
+- All five protected M2 GET endpoints returned HTTP 401 without a bearer token.
+  Direct anonymous Supabase table probes returned 401/42501. This establishes
+  denial, not an independent inspection of hosted RLS flags or every role policy.
+- Intermittent upstream unavailability was observed; explicit retries succeeded.
+  A recoverable owner-check failure previously redirected a submitting form away
+  from its inputs. Server actions now return an inline error and make no API call
+  unless owner verification succeeds. No automatic mutation retries were added.
+- After that fix: 31 frontend tests, lint, typecheck, formatting, production build
+  and client-secret scan passed. Five new regression cases cover both mutations,
+  denied/unavailable access, client initialization failure and explicit retry.
+  The 42 backend tests and isolated SQL checks listed above are prior-run evidence;
+  their code was unchanged by this follow-up.
+
+## Retained synthetic records
+
+Names start with `Uji M2 20260924`: one customer, accounts A/B and one team.
+A is inactive; B, the customer and team remain active test fixtures. September 24
+historical choices are retained; September 25 and 26 choices are empty. No rows
+were hard-deleted and no real money/order records were created.
+
 ## Commands and remaining work
 
-See M2_SETUP.md for exact commands. Apply the M2 migration once to the development
-project, then perform its synthetic live acceptance checklist. Do not run the empty-
-database SQL test against the already provisioned live owner project. No database
-migration or real account change was executed on the user's Supabase project.
-Do not claim M2 live completion until persistence, conflicts and RLS are verified
-there. M3 remains unimplemented.
+See M2_SETUP.md for run commands. Do not rerun the migration or execute the
+empty-database SQL test on the provisioned project. No extra environment changes
+or service-role key are needed. No financial rule changed and no specification
+conflict was found in this follow-up.
+
+Multi-session hosted concurrency testing, comprehensive hosted role-policy review
+and production network reliability remain unverified; local SQL tests are not
+proof of those properties. Login/logout browser checks were completed in M1 and
+were not repeated here to preserve the user's active session.
+
+M3 remains unimplemented: Quick Order, order list/detail, separate payment/RMB
+state transitions, server-side calculations, idempotency and audit events. Read
+and resolve its specifications before implementing any of those features.

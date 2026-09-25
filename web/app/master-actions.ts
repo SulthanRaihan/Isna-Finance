@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { requireOwner } from "@/lib/auth/guard";
+import { readAccess } from "@/lib/auth/access";
+import { createClient } from "@/lib/supabase/server";
 import { api, actionError } from "@/lib/master/api";
 import type { ActionResult, Entity } from "@/lib/master/types";
 const entities = new Set(["customers", "accounts", "teams"]);
@@ -10,7 +11,8 @@ export async function saveRecord(
   id: string | null,
   payload: Record<string, unknown>,
 ): Promise<ActionResult> {
-  await requireOwner();
+  const denied = await checkWriteAccess();
+  if (denied) return denied;
   if (!entities.has(entity) || (id && (!uuid.test(id) || entity === "teams")))
     return { error: "Permintaan tidak valid." };
   try {
@@ -31,7 +33,8 @@ export async function saveDaily(
   ids: string[],
   defaultId: string | null,
 ): Promise<ActionResult> {
-  await requireOwner();
+  const denied = await checkWriteAccess();
+  if (denied) return denied;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(day))
     return { error: "Tanggal tidak valid." };
   try {
@@ -44,5 +47,24 @@ export async function saveDaily(
     return { ok: true };
   } catch (error) {
     return actionError(error);
+  }
+}
+
+// Action failures stay in the form; page guards may still redirect on navigation.
+async function checkWriteAccess(): Promise<ActionResult | null> {
+  try {
+    const access = await readAccess(await createClient());
+    if (access.status === "owner") return null;
+    if (access.status === "unavailable")
+      return {
+        error:
+          "Akses belum dapat diperiksa. Isian tetap tersedia; coba lagi nanti.",
+      };
+    return { error: "Sesi owner tidak tersedia. Silakan masuk kembali." };
+  } catch {
+    return {
+      error:
+        "Akses belum dapat diperiksa. Isian tetap tersedia; coba lagi nanti.",
+    };
   }
 }

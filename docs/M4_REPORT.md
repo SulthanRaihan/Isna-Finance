@@ -46,10 +46,38 @@ Optimistic versions reject edits/payment after an unseen activity change.
 No unresolved financial specification conflict. Signed adjustments follow F-08;
 ledger balances are cumulative through selected day, with daily totals separate.
 No new dependencies or environment variables. No real financial data was used.
-Hosted M4 migration has NOT been applied. Browser acceptance and multi-session
-hosted concurrency/RLS verification remain pending. Prior M3 browser acceptance
-also remains partial; see M3_REPORT.md. Passing PGlite is not production approval.
+The user applied the hosted M4 migration; core browser acceptance is recorded
+below. Multi-session hosted concurrency and full RLS verification remain pending.
+Prior M3 browser acceptance remains partial; see M3_REPORT.md. Passing PGlite is
+not production approval.
 Keys survive only while a form is mounted; inspect records before re-entry after
 reload on uncertain responses. Historical records are never hard deleted.
 Only M4 is implemented. M5 ATM/manual outflows/correction/void, M6 summaries and
 AI remain future milestones.
+
+## Hosted browser acceptance - 2026-09-26
+
+Using the provisioned owner session, local Next.js/FastAPI and development Supabase:
+
+- API health returned ok. Anonymous GET team-activities returned 401.
+- Owner ledger and activity reads succeeded after the user applied M4 SQL.
+- Reused `Uji M2 20260924 - Tim Sintetis`, ID
+  `e1461df3-382f-43c4-84d4-a01c39d3f316`, on activity date 2026-09-25.
+- Created three clearly labeled synthetic movements: received 100, distributed
+  30, signed adjustment -2.50. Each returned 201. UI showed cumulative CNY 67.50,
+  daily received 100, distributed 30 and adjustment -2.50.
+- Created one daily activity with actual handled 1 CNY and rate 100.005.
+  API returned 201; refreshed UI showed fee 100.01 and unpaid status.
+- Explicitly confirmed fee payment for 2026-09-26. Refreshed UI showed paid,
+  Money Out date 2026-09-26, unchanged activity date 2026-09-25 and fee 100.01.
+  Financial edit/payment controls disappeared; the ledger balance stayed 67.50.
+- Browser keyboard submission was used where the narrow embedded viewport's
+  pointer interaction did not activate controls. Date selection via URL was used
+  for the read-only ledger filter. Pointer/responsive QA is not marked complete.
+
+The existing synthetic records are retained; do not recreate this activity or
+reapply the migration to repeat acceptance. No real financial transactions were
+performed. No application code or business rules changed in this acceptance run.
+Hosted duplicate-retry fault injection, direct canonical-row/audit count review,
+unpaid edit/stale-write scenarios and full role/concurrency checks remain pending;
+their isolated automated coverage is documented above, not claimed as live proof.

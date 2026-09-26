@@ -1,7 +1,8 @@
 # M4 activation
 
 M4 code requires migration `supabase/migrations/202609260001_team_activity.sql`.
-This migration has not been applied to hosted Supabase by the agent.
+The user reports applying this migration. Core hosted synthetic browser acceptance
+passed on 2026-09-26; see M4_REPORT.md. Do not rerun it on this configured project.
 
 1. After M1/M2/M3 migrations, run the complete M4 migration once in the same
    development project's SQL Editor as postgres. Keep RLS enabled. If its tables

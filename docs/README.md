@@ -81,3 +81,5 @@ For M2 also read `15_M2_MASTER_DATA.md`.
 For M3 also read `16_M3_ORDERS.md` (approved rounding, editing and account rules).
 
 For M4 also read `17_M4_TEAM_ACTIVITY.md` (separate activity/payment dates).
+
+For M5 also read `18_M5_MONEY_OUT.md`.

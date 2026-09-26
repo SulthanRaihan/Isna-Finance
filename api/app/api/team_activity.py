@@ -8,6 +8,7 @@ from app.api.master_data import Repo, checked_context, reply
 from app.api.orders import Key
 from app.core.auth import require_owner
 from app.schemas.team_activity import ActivityCreate, ActivityEdit, FeePayment, MovementCreate
+from app.services.money_out import current_postings
 from app.services.orders import expected_idr
 
 router = APIRouter(dependencies=[Depends(require_owner)])
@@ -17,6 +18,8 @@ def present(row):
     row = dict(row)
     for field, places in (
         ("cny_amount", 2),
+        ("amount_idr", 2),
+        ("rate_or_fee", 6),
         ("actual_cny_handled", 2),
         ("fee_rate", 6),
         ("calculated_fee_idr", 2),
@@ -111,6 +114,7 @@ async def activities(
     if date:
         params["business_date"] = f"eq.{date}"
     rows = await repo.request("GET", "team_daily_activities", params=params)
+    rows = await current_postings(repo, [present(r) for r in rows], "team_daily_activity")
     return reply({"items": [present(r) for r in rows], "limit": limit, "offset": offset})
 
 

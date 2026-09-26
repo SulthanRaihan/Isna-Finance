@@ -60,6 +60,10 @@ export default async function Activity({
   return (
     <AppShell activePath="/activity">
       <div className="mx-auto max-w-4xl space-y-6">
+        <div className="flex gap-4 text-sm text-primary">
+          <Link href="/atm">ATM / Card</Link>
+          <Link href="/outflows">Money Out</Link>
+        </div>
         <h1 className="text-2xl font-semibold">Aktivitas tim</h1>
         <p className="text-foreground-muted">
           Ledger RMB dan fee harian. Saldo ini adalah catatan operasional tim.

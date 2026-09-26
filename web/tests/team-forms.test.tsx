@@ -22,7 +22,7 @@ it("paid activity hides financial editing and payment actions", () => {
       activity={{ ...activity, fee_status: "paid", payment_date: "2020-01-03" }}
     />,
   );
-  expect(screen.getByText(/Money Out pada 2020-01-03/)).toBeVisible();
+  expect(screen.getByText(/Pembayaran asli pada 2020-01-03/)).toBeVisible();
   expect(screen.queryByText("Ubah aktivitas belum dibayar")).toBeNull();
   expect(
     screen.queryByRole("button", { name: "Konfirmasi fee dibayar" }),

@@ -67,7 +67,8 @@ Use **one canonical `financial_outflows` table** for all amounts
 contributing to Money Out.
 
 Operational records such as team activity or ATM/card activity may
-create exactly one linked outflow record. They must not be summed
+create one linked posted outflow only on explicit payment. Corrections retain
+voided ancestors and at most one posted replacement. They must not be summed
 separately again in dashboard calculations.
 
 Canonical categories: - `rmb_purchase` - `team_fee` - `atm_card_fee` -
@@ -90,7 +91,8 @@ Example: - actual CNY handled: 16,000 - fee rate: 2 - fee: 32,000 IDR
 
 Example: - actual CNY handled: 5,600 - fee rate: 1.7 - fee: 9,520 IDR
 
-Capacity is not used as the fee basis.
+Capacity is not used as the fee basis. Saving is unpaid; Money Out is recognized
+only on explicit payment using the actual payment date.
 
 ## F-06 RMB purchase/exchange outflow
 
@@ -99,6 +101,8 @@ When the spreadsheet/business workflow records an RMB purchase/exchange:
 
 Store the CNY amount and purchase rate for traceability, but Money Out
 uses the calculated/posting amount in IDR.
+
+Exchange fees use the actual IDR amount entered by the user, without a CNY/rate formula.
 
 ## F-07 Daily Profit
 
@@ -135,13 +139,15 @@ developer/server timezone.
 
 ## F-11 Corrections
 
--   Posted financial records are not hard-deleted.
--   Material correction uses controlled edit/void behavior and creates
-    an audit event.
--   A voided outflow does not contribute to Money Out.
--   If a future authorized correction changes a linked operational activity,
-    its canonical outflow must be handled atomically so there is never a stale
-    duplicate. M4 paid team activities are locked; no correction/void is exposed.
+- Posted outflows are never hard-deleted. Void requires a reason, preserves the
+  original values and audit, and excludes the posting from Money Out. It is not a refund.
+- Correction atomically voids the current posted record and inserts a replacement
+  linked by replaces_id. A failure at any stage rolls back posting, audit and key.
+- Applies to team_fee, atm_card_fee, rmb_purchase, exchange_fee and other. Preserve
+  category/source identity and the full chain. Only the current posted row counts.
+- Paid activity snapshots remain locked; corrected inputs and actual payment date
+  are stored on the replacement. Void does not reset fee_status or permit repayment.
+- Realized customer orders retain M3 locks. M5 does not correct customer orders.
 
 ## F-12 Idempotency / duplicate protection
 
@@ -225,3 +231,18 @@ Payment is idempotent and concurrent calls cannot create duplicate postings.
 Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
 Later corrections require an explicit correction/void workflow, outside M4.
 See 17_M4_TEAM_ACTIVITY.md for the implementation contract.
+
+## M5 frozen rules (2026-09-26)
+
+ATM/card activity saves a calculated fee with fee_status=unpaid and no Money Out.
+Explicit fee payment supplies the actual payment_date and atomically creates one
+canonical atm_card_fee outflow on that date. Payment is idempotent.
+Void requires a reason, retains the original record/audit, changes status to
+voided and excludes that record from Money Out. Void is accounting invalidation,
+not a real-world refund. Correction atomically voids the old posting and creates
+a linked replacement, preserving the full chain and audit; any failure rolls back
+all changes. Only the current posted replacement contributes to Money Out.
+Applies to team fees, ATM/card fees, RMB purchases, exchange fees and other manual
+outflows. M3 realized orders stay locked; no order correction is introduced.
+Exchange fee uses actual user-entered IDR. Only RMB purchase uses CNY * rate.
+See 18_M5_MONEY_OUT.md for schema/API and verification details.

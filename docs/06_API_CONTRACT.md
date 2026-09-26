@@ -281,8 +281,8 @@ activity.
 }
 ```
 
-Backend atomically calculates `9520.00` IDR and creates exactly one
-canonical outflow.
+Backend calculates `9520.00` IDR and saves unpaid activity without an outflow.
+Explicit payment creates its canonical outflow on the actual payment date.
 
 ## GET `/atm-activities`
 
@@ -309,7 +309,9 @@ Example RMB purchase:
 }
 ```
 
-Backend calculates IDR amount for categories with a defined formula.
+Backend calculates RMB purchase IDR as CNY * purchase rate with HALF_UP rounding.
+Exchange fee and other expense accept actual amount_idr only. Manual requests
+cannot create team_fee or atm_card_fee.
 
 Example other:
 
@@ -324,8 +326,22 @@ Example other:
 
 ## POST `/outflows/{outflow_id}/void`
 
-Voids rather than hard-deletes a posted financial outflow. Requires
-reason.
+Requires `reason`, `updated_at`, and Idempotency-Key. Voids the posted record,
+preserves audit, and excludes it from Money Out. Does not represent a refund.
+
+## POST `/outflows/{outflow_id}/correct`
+
+Requires Idempotency-Key and a flat body containing `reason`, `updated_at`,
+`business_date`, `description`, and either `cny_amount`/`rate_or_fee` for purchase
+or fee categories, or `amount_idr` for exchange_fee/other. Category and source
+remain those of the original. Atomically void the current posting and create a
+linked replacement; rollback all on failure. Response is the new posting.
+
+GET `/outflows` defaults to status=posted; optional date/category/status/source
+filters with limit/offset. GET `/outflows/{id}` returns outflow, full chain, audit.
+ATM PATCH uses create fields plus updated_at and is only allowed while unpaid.
+POST `/atm-activities/{id}/pay` requires payment_date, updated_at, Idempotency-Key.
+See `18_M5_MONEY_OUT.md` for complete M5 contract.
 
 ------------------------------------------------------------------------
 
@@ -409,7 +425,7 @@ The user confirms/corrects the draft, then Next.js calls the ordinary
 -   order expected IDR is recalculated server-side
 -   payment recognition uses received timestamp
 -   explicit team fee payment creates one and only one outflow; unpaid activity creates none
--   ATM activity creates one and only one outflow
+-   explicit ATM fee payment creates one canonical outflow; unpaid activity creates none
 -   idempotent retry does not duplicate record
 -   voided outflow disappears from Money Out
 -   AI extraction cannot post an order
@@ -474,3 +490,18 @@ Payment is idempotent and concurrent calls cannot create duplicate postings.
 Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
 Later corrections require an explicit correction/void workflow, outside M4.
 See 17_M4_TEAM_ACTIVITY.md for the implementation contract.
+
+## M5 frozen rules (2026-09-26)
+
+ATM/card activity saves a calculated fee with fee_status=unpaid and no Money Out.
+Explicit fee payment supplies the actual payment_date and atomically creates one
+canonical atm_card_fee outflow on that date. Payment is idempotent.
+Void requires a reason, retains the original record/audit, changes status to
+voided and excludes that record from Money Out. Void is accounting invalidation,
+not a real-world refund. Correction atomically voids the old posting and creates
+a linked replacement, preserving the full chain and audit; any failure rolls back
+all changes. Only the current posted replacement contributes to Money Out.
+Applies to team fees, ATM/card fees, RMB purchases, exchange fees and other manual
+outflows. M3 realized orders stay locked; no order correction is introduced.
+Exchange fee uses actual user-entered IDR. Only RMB purchase uses CNY * rate.
+See 18_M5_MONEY_OUT.md for schema/API and verification details.

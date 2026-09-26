@@ -8,7 +8,7 @@ create function auth.uid() returns uuid language sql stable as $$ select nullif(
 grant usage on schema auth to anon,authenticated;
 grant execute on function auth.uid() to anon,authenticated;`);
 try {
- for(const path of ['supabase/migrations/202609220001_profiles.sql','supabase/migrations/202609230001_master_data.sql','supabase/migrations/202609250001_orders.sql','supabase/migrations/202609260001_team_activity.sql','supabase/tests/team_activity.sql','supabase/tests/master_data.sql','supabase/tests/orders.sql']) {
+ for(const path of ['supabase/migrations/202609220001_profiles.sql','supabase/migrations/202609230001_master_data.sql','supabase/migrations/202609250001_orders.sql','supabase/migrations/202609260001_team_activity.sql','supabase/migrations/202609270001_money_out.sql','supabase/tests/money_out.sql','supabase/tests/team_activity.sql','supabase/tests/master_data.sql','supabase/tests/orders.sql']) {
   await db.exec(await readFile(new URL(path,root),'utf8'));
   console.log('PASS',path);
  }

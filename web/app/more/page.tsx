@@ -18,6 +18,18 @@ export default async function MorePage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {[
             {
+              href: "/atm",
+              title: "ATM / Card",
+              text: "Aktivitas dan pembayaran fee kartu.",
+              icon: Landmark,
+            },
+            {
+              href: "/outflows",
+              title: "Money Out",
+              text: "Pengeluaran, void, dan riwayat koreksi.",
+              icon: CalendarDays,
+            },
+            {
               href: "/customers",
               title: "Pelanggan",
               text: "Nama dan catatan pelanggan berulang.",

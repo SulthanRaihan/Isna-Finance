@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { CurrentPosting } from "@/components/current-posting";
 import { writeTeam } from "@/app/team-actions";
 import type { TeamActivity } from "@/lib/team-activity";
 import { money, previewIDR } from "@/lib/orders/types";
@@ -235,7 +236,13 @@ export function ActivityCard({ activity }: { activity: TeamActivity }) {
         Rp{money(activity.calculated_fee_idr)}
       </p>
       {activity.fee_status === "paid" ? (
-        <p>Money Out pada {activity.payment_date}. Nilai finansial terkunci.</p>
+        <>
+          <p>
+            Pembayaran asli pada {activity.payment_date}. Nilai aktivitas
+            terkunci; koreksi tersimpan pada posting pengganti.
+          </p>
+          <CurrentPosting outflow={activity.current_outflow} />
+        </>
       ) : (
         <>
           <details>

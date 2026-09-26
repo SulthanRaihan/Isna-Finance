@@ -1,4 +1,6 @@
+import type { Outflow } from "./money-out";
 export type TeamActivity = {
+  current_outflow?: Outflow | null;
   id: string;
   team_id: string;
   business_date: string;

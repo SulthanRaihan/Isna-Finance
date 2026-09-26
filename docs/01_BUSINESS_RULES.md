@@ -193,3 +193,18 @@ Payment is idempotent and concurrent calls cannot create duplicate postings.
 Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
 Later corrections require an explicit correction/void workflow, outside M4.
 See 17_M4_TEAM_ACTIVITY.md for the implementation contract.
+
+## M5 frozen rules (2026-09-26)
+
+ATM/card activity saves a calculated fee with fee_status=unpaid and no Money Out.
+Explicit fee payment supplies the actual payment_date and atomically creates one
+canonical atm_card_fee outflow on that date. Payment is idempotent.
+Void requires a reason, retains the original record/audit, changes status to
+voided and excludes that record from Money Out. Void is accounting invalidation,
+not a real-world refund. Correction atomically voids the old posting and creates
+a linked replacement, preserving the full chain and audit; any failure rolls back
+all changes. Only the current posted replacement contributes to Money Out.
+Applies to team fees, ATM/card fees, RMB purchases, exchange fees and other manual
+outflows. M3 realized orders stay locked; no order correction is introduced.
+Exchange fee uses actual user-entered IDR. Only RMB purchase uses CNY * rate.
+See 18_M5_MONEY_OUT.md for schema/API and verification details.

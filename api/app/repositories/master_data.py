@@ -64,6 +64,7 @@ class MasterData:
                 "ORDER_LOCKED",
                 "ACTIVITY_LOCKED",
                 "STALE_ACTIVITY",
+                "STALE_OUTFLOW",
                 "STATE_CONFLICT",
                 "STALE_ORDER",
                 "IDEMPOTENCY_CONFLICT",
@@ -79,11 +80,11 @@ class MasterData:
                     else 409
                 )
                 raise DataError(
-                    status, domain, "Order request rejected; review the current order and inputs."
+                    status, domain, "Request rejected; review the current record and inputs."
                 )
             if code == "23505":
                 raise DataError(409, "DUPLICATE", "A record with this unique value already exists.")
-            if code in ("22023", "23514", "23503", "23502", "22003", "22007", "22008"):
+            if code in ("22023", "23514", "23503", "23502", "22003", "22007", "22008", "22P02"):
                 raise DataError(
                     422, "VALIDATION_ERROR", "Check the selected accounts and input values."
                 )

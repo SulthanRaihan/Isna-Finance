@@ -31,7 +31,7 @@ export function WorkspaceHome({ displayName }: { displayName: string }) {
             sudah dikirim melalui Quick Order.
           </p>
           <p className="mt-4 text-xs text-foreground-muted">
-            Aktivitas tim dan rekap harian tersedia pada tahap berikutnya.
+            Aktivitas tim tersedia melalui menu Activity. Rekap harian menyusul.
           </p>
         </CardContent>
       </Card>

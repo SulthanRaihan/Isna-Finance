@@ -118,6 +118,28 @@ function OrderContent({
       ))}
       <OrderTransitions order={order} timezone={timezone} />
       <section className="rounded-2xl border bg-surface p-6">
+        <h2 className="font-semibold">Pergerakan tim terkait</h2>
+        {!order.team_movements?.length && (
+          <p className="mt-3 text-sm">Belum ada pergerakan terkait.</p>
+        )}
+        {order.team_movements?.map((m) => (
+          <p key={m.id} className="mt-3">
+            <Link
+              className="text-primary"
+              href={`/activity?team=${m.team_id}&date=${m.business_date}`}
+            >
+              {m.business_date} · {m.movement_type} · CNY {money(m.cny_amount)}
+            </Link>
+          </p>
+        ))}
+        {order.team_movements_has_more && (
+          <p className="mt-3 text-sm">
+            Menampilkan 20 pergerakan terbaru. Riwayat tambahan tersedia pada
+            ledger tim.
+          </p>
+        )}
+      </section>
+      <section className="rounded-2xl border bg-surface p-6">
         <h2 className="text-xl font-semibold">Riwayat perubahan</h2>
         <ul className="mt-4 space-y-4">
           {order.audit?.map((event) => (

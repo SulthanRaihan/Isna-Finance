@@ -31,12 +31,11 @@ describe("M1 shell", () => {
         "href",
         "/more",
       );
-      for (const name of ["Activity"]) {
-        expect(
-          nav.getByRole("button", { name: `${name} (coming soon)` }),
-        ).toBeDisabled();
-      }
+      expect(nav.getByRole("link", { name: "Activity" })).toHaveAttribute(
+        "href",
+        "/activity",
+      );
     }
-    expect(screen.getByText(/Aktivitas tim dan rekap harian/)).toBeVisible();
+    expect(screen.getByText(/Aktivitas tim tersedia/)).toBeVisible();
   });
 });

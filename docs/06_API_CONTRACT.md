@@ -258,9 +258,9 @@ posting.
 }
 ```
 
-Backend atomically: 1. calculates fee 2. stores team activity 3. creates
-exactly one linked canonical `financial_outflow` 4. returns both
-references
+Backend calculates the fee and stores an unpaid team activity without an
+outflow. POST /team-activities/{id}/pay explicitly confirms actual payment_date
+and atomically creates one linked canonical outflow; see the M4 rule below.
 
 This resolves the open schema decision in favor of explicit daily team
 activity.
@@ -408,7 +408,7 @@ The user confirms/corrects the draft, then Next.js calls the ordinary
 -   default account must be active
 -   order expected IDR is recalculated server-side
 -   payment recognition uses received timestamp
--   team activity creates one and only one outflow
+-   explicit team fee payment creates one and only one outflow; unpaid activity creates none
 -   ATM activity creates one and only one outflow
 -   idempotent retry does not duplicate record
 -   voided outflow disappears from Money Out
@@ -460,3 +460,17 @@ present, must belong to the selected active accounts. No implicit carry-forward.
   creates or changes daily assignments.
 
 M3 implementation details and error behavior: see 16_M3_ORDERS.md.
+
+## M4 fee payment rule (approved 2026-09-26)
+
+Activity business_date is the date the team activity occurred. Saving calculates
+fee with Decimal ROUND_HALF_UP to two places and starts fee_status=unpaid; it
+creates no financial_outflow and recognizes no Money Out. Explicit payment
+confirmation supplies payment_date (the actual date money left). Payment atomically
+marks the activity paid and creates exactly one canonical financial_outflows row:
+category=team_fee, source_type=team_daily_activity, source_id=activity.id,
+business_date=payment_date. Only this posted outflow contributes to Money Out.
+Payment is idempotent and concurrent calls cannot create duplicate postings.
+Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
+Later corrections require an explicit correction/void workflow, outside M4.
+See 17_M4_TEAM_ACTIVITY.md for the implementation contract.

@@ -20,6 +20,8 @@ export type Order = {
   customer?: { id: string; display_name: string; is_active?: boolean };
   account?: MasterRecord;
   audit?: Audit[];
+  team_movements?: import("@/lib/team-activity").TeamMovement[];
+  team_movements_has_more?: boolean;
 };
 export type Audit = {
   id: string;

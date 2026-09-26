@@ -250,14 +250,15 @@ movements. This frozen decision supersedes the earlier open implementation detai
 -   `actual_cny_handled numeric(18,2) NOT NULL CHECK > 0`
 -   `fee_rate numeric(18,6) NOT NULL CHECK >= 0`
 -   `calculated_fee_idr numeric(20,2) NOT NULL`
+-   `fee_status text NOT NULL default unpaid` check (`unpaid`,`paid`)
+-   `payment_date date NULL` (required iff paid)
 -   `created_by uuid NOT NULL FK profiles`
 -   timestamps
 -   unique `(team_id, business_date)` for MVP unless multiple daily
     sessions are later required
 
-Saving this record atomically creates/updates exactly one canonical
-`financial_outflows` row with `source_type='team_daily_activity'` and
-`source_id=team_daily_activities.id`.
+Saving this record calculates the fee as unpaid without creating an outflow.
+Explicit fee payment creates the single canonical outflow; see the M4 rule below.
 
 Team movements remain the reconciliation ledger and do not independently
 create team-fee outflows.
@@ -306,3 +307,17 @@ M3's idempotency_keys additionally stores non-null request_json and response_jso
 orders with ON DELETE RESTRICT. Financial values inside audit/replay JSON are
 encoded as decimal strings. Direct authenticated writes to orders, audit_logs and
 idempotency_keys are revoked; checked RPCs perform atomic mutations.
+
+## M4 fee payment rule (approved 2026-09-26)
+
+Activity business_date is the date the team activity occurred. Saving calculates
+fee with Decimal ROUND_HALF_UP to two places and starts fee_status=unpaid; it
+creates no financial_outflow and recognizes no Money Out. Explicit payment
+confirmation supplies payment_date (the actual date money left). Payment atomically
+marks the activity paid and creates exactly one canonical financial_outflows row:
+category=team_fee, source_type=team_daily_activity, source_id=activity.id,
+business_date=payment_date. Only this posted outflow contributes to Money Out.
+Payment is idempotent and concurrent calls cannot create duplicate postings.
+Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
+Later corrections require an explicit correction/void workflow, outside M4.
+See 17_M4_TEAM_ACTIVITY.md for the implementation contract.

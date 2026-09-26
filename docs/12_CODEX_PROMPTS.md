@@ -61,8 +61,8 @@ creation. Do not implement AI extraction yet.
 
 Implement **M4 Team Ledger + Daily Team Activity** only.
 
-Keep team movements separate from fee calculation. Daily team activity
-creates exactly one canonical financial outflow. Add tests proving there
+Keep team movements separate from fee calculation. Daily team activity starts unpaid; explicit fee payment
+creates exactly one canonical financial outflow dated on actual payment. Add tests proving there
 is no double counting.
 
 ## M5 prompt

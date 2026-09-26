@@ -243,7 +243,8 @@ Use status text + icon; do not rely on color alone.
 └────────────────────────────────┘
 ```
 
-The fee posting is generated exactly once from saved daily activity.
+Saving activity leaves the fee unpaid. Explicit payment confirmation creates
+the single canonical outflow on the actual payment date.
 
 ------------------------------------------------------------------------
 
@@ -441,3 +442,17 @@ wider cards/tables. Do not create a separate desktop workflow.
   creates or changes daily assignments.
 
 M3 implementation details and error behavior: see 16_M3_ORDERS.md.
+
+## M4 fee payment rule (approved 2026-09-26)
+
+Activity business_date is the date the team activity occurred. Saving calculates
+fee with Decimal ROUND_HALF_UP to two places and starts fee_status=unpaid; it
+creates no financial_outflow and recognizes no Money Out. Explicit payment
+confirmation supplies payment_date (the actual date money left). Payment atomically
+marks the activity paid and creates exactly one canonical financial_outflows row:
+category=team_fee, source_type=team_daily_activity, source_id=activity.id,
+business_date=payment_date. Only this posted outflow contributes to Money Out.
+Payment is idempotent and concurrent calls cannot create duplicate postings.
+Once paid, team_id, business_date, actual_cny_handled and fee_rate are locked.
+Later corrections require an explicit correction/void workflow, outside M4.
+See 17_M4_TEAM_ACTIVITY.md for the implementation contract.

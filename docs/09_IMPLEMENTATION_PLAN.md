@@ -42,7 +42,8 @@ received timestamp drives Money In - duplicate retry protection
 ## M4 - Team ledger + daily team activity
 
 Deliver: - team movements - optional order link - team balance - actual
-daily handled CNY - team fee - exactly one canonical outflow
+daily handled CNY - unpaid team fee - explicit payment confirmation with actual
+payment date - exactly one canonical outflow on payment
 
 Tests: - ledger math - fee math - no double-counting
 

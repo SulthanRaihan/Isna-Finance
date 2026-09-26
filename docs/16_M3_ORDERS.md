@@ -51,8 +51,8 @@ the actual event time (shown in the configured business timezone).
 
 GET /orders supports date, date_from, date_to, customer_id, receiving_account_id,
 payment_status, fulfillment_status, q (customer name), limit 1..100 and offset.
-GET /orders/{id} includes customer, masked account, audit and an empty linked
-team-movements list until M4. Derived ui_status includes sent_awaiting_payment;
+GET /orders/{id} includes customer, masked account and audit. M4 adds up to 20
+linked team movements with a has-more flag; the ledger contains the full history. Derived ui_status includes sent_awaiting_payment;
 Money In date is null until received, then derives only from idr_received_at.
 GET /audit/orders/{id} returns append-only order audit history.
 

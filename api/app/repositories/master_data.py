@@ -62,6 +62,8 @@ class MasterData:
             domain = data.get("message")
             if code == "P0001" and domain in {
                 "ORDER_LOCKED",
+                "ACTIVITY_LOCKED",
+                "STALE_ACTIVITY",
                 "STATE_CONFLICT",
                 "STALE_ORDER",
                 "IDEMPOTENCY_CONFLICT",

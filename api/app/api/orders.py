@@ -113,7 +113,19 @@ async def order_detail(order_id: UUID, repo: Repo):
     await checked_context(repo)
     row = present_order(await get_order(repo, order_id))
     row["audit"] = await audit_rows(repo, order_id)
-    row["team_movements"] = []
+    movements = await repo.request(
+        "GET",
+        "team_movements",
+        params={
+            "order_id": f"eq.{order_id}",
+            "order": "business_date.desc,created_at.desc,id.desc",
+            "limit": 21,
+        },
+    )
+    row["team_movements"] = [
+        dict(m, cny_amount=format(Decimal(str(m["cny_amount"])), ".2f")) for m in movements[:20]
+    ]
+    row["team_movements_has_more"] = len(movements) > 20
     return reply(row)
 
 

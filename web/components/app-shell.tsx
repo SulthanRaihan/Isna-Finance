@@ -27,7 +27,7 @@ const navigation: NavigationItem[] = [
     available: true,
     href: "/orders/new",
   },
-  { label: "Activity", icon: Activity, available: false },
+  { label: "Activity", icon: Activity, available: true, href: "/activity" },
   { label: "More", icon: MoreHorizontal, available: true, href: "/more" },
 ];
 

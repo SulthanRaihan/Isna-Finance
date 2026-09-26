@@ -42,9 +42,9 @@ search filters and preserving inputs after failures.
 - Git diff whitespace check passed. No new environment variables or dependencies.
 
 
-No browser or hosted Supabase M3 acceptance was performed, as requested. Local
-PGlite tests do not establish real JWT/RLS integration or multi-session production
-concurrency. The migration must be applied once using M3_SETUP.md before live use.
+Browser acceptance was deferred at the implementation commit. Hosted acceptance
+has now started as recorded below. PGlite alone does not establish hosted RLS or
+multi-session concurrency behavior.
 Existing upstream Starlette test-client deprecation warnings remain.
 
 ## Limits and remaining work
@@ -57,7 +57,30 @@ mounted form; after closing/reloading, inspect Orders before re-entry.
 
 Read APIs currently return customer-name search results and prioritize customers
 seen in the recent order window; comprehensive search uses the search input.
-Order detail returns empty linked team movements until M4. Live activation,
-responsive browser review and shared synthetic acceptance remain outstanding.
+Order detail returns empty linked team movements until M4. Responsive browser
+review and remaining shared synthetic acceptance checks are outstanding.
 Next milestone M4 is team ledger/daily activity with exactly one canonical fee
 outflow. It is not implemented here.
+
+## Hosted synthetic acceptance - 2026-09-26
+
+The user reported applying M3 SQL. The local application used the existing owner
+session against the development Supabase project:
+
+- Owner order reads succeeded; anonymous order access returned 401.
+- Synthetic account B was explicitly assigned as default for 2026-09-25 through
+  M2. Quick Order preselected it without changing assignments itself.
+- Created one synthetic order: `983f6f34-fc35-49b6-9f71-38d60959c2e1`.
+  CNY 1 at rate 100.005 persisted as IDR 100.01. Creation audit was visible.
+- Edited CNY to 2 while awaiting/pending. PATCH returned 200, detail showed
+  IDR 200.01 and an additional update audit. No duplicate order was created.
+- Automated datetime entry did not populate the submitted timestamp correctly;
+  receipt returned 422. The embedded browser then crashed during native date-field
+  interaction. Detail was reopened for shared testing. Receipt, sent state and
+  post-realization edits are NOT verified live.
+
+Resume from this same synthetic order. Outstanding hosted checks: receipt date
+across midnight, note edits/field locks, sent-before-paid/completed states,
+explicit account override, list filters, uncertain retry, developer/direct-table
+RLS denial and concurrent writes. Automated coverage above is not a substitute
+for these hosted checks. No financial rules or application code changed this run.

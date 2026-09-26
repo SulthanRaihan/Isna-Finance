@@ -1,8 +1,9 @@
 # M3 activation and shared acceptance
 
-Code is ready for M3. The agent has NOT applied the M3 migration to hosted
-Supabase or created live orders. Browser acceptance is deferred at the user's
-request. Existing M1/M2 setup and environment variables remain valid.
+The user reports applying the M3 migration. Hosted owner reads, synthetic order
+creation and pre-payment editing have been verified through the local application.
+Acceptance remains partial; see M3_REPORT.md. Existing environment variables remain
+valid. Do not rerun the migration on this configured project.
 
 ## Apply once when ready to test together
 

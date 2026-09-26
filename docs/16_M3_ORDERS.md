@@ -71,5 +71,5 @@ Idempotency locking serializes the same owner/operation/key before order locking
 Synthetic automated checks cover rounding/overflow, strict decimal inputs,
 received-date recognition across midnight, status independence, locked edits,
 assigned-account validation, atomic audit/idempotency, denial and stale versions.
-Manual browser/Supabase acceptance is deferred until the user tests together.
-Do not claim hosted activation before the M3 migration is applied.
+Hosted synthetic acceptance started after the user applied the M3 migration.
+See M3_REPORT.md for verified results and outstanding hosted checks.

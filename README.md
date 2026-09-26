@@ -1,7 +1,7 @@
 # Isna Finance
 
 Mobile-first CNY/IDR operations workspace. M1 login and M2 master data are active.
-M3 Orders code is ready for migration and shared synthetic acceptance; see
+M3 Orders is activated with partial hosted synthetic acceptance; see
 [M3 setup](docs/M3_SETUP.md). No public signup, team/outflow posting or AI features.
 
 ## Repository

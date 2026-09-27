@@ -1,0 +1,3 @@
+# Only this function uses a dedicated secret checked inside its handler.
+[functions.ai-cleanup]
+verify_jwt = false

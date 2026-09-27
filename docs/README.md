@@ -87,3 +87,5 @@ For M5 also read `18_M5_MONEY_OUT.md`.
 For M6 also read `19_M6_REPORTING.md` (frozen counts, current pending and inclusive openings).
 
 For M7 also read `20_M7_SECURITY.md`.
+
+For M8 also read `21_M8_EXTRACTION.md`.

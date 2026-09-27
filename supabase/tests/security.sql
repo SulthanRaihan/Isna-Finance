@@ -19,14 +19,14 @@ do $$ declare t record; f record; total int:=0; begin
   if has_table_privilege('authenticated',t.oid,'DELETE,TRUNCATE') then raise exception 'Destructive privilege: %',t.relname; end if;
   if t.relname not in ('customers','accounts','teams') and has_table_privilege('authenticated',t.oid,'INSERT,UPDATE') then raise exception 'Direct protected write: %',t.relname; end if;
  end loop;
- if total<>15 then raise exception 'Review changed table inventory: %',total; end if;
+ if total<>16 then raise exception 'Review changed table inventory: %',total; end if;
  total:=0;
  for f in select p.oid,p.proname,p.prosecdef,p.proconfig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' loop
   total:=total+1;
   if has_function_privilege('anon',f.oid,'EXECUTE') then raise exception 'Anonymous RPC: %',f.proname; end if;
   if not ('search_path=""'=any(f.proconfig)) then raise exception 'Unsafe RPC search path: %',f.proname; end if;
  end loop;
- if total<>9 then raise exception 'Review changed RPC inventory: %',total; end if;
+ if total<>11 then raise exception 'Review changed RPC inventory: %',total; end if;
  for f in select p.oid,p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='private' loop
   if has_function_privilege('authenticated',f.oid,'EXECUTE') or has_function_privilege('anon',f.oid,'EXECUTE') then raise exception 'Private helper exposed: %',f.proname; end if;
  end loop;
@@ -42,6 +42,8 @@ do $$ declare subject text; t record; n int; call_sql text; begin
   end loop;
   foreach call_sql in array array[
    'select public.business_context()',
+   'select public.ai_upload_job(''create'',null,''image/png'',1)',
+   'select public.ai_cleanup_heartbeat()',
    'select public.replace_daily_accounts(null,null,null)',
    'select public.mutate_order(null,null,null,null,null)',
    'select public.mutate_team_activity(null,null,null,null)',

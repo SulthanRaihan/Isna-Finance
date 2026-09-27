@@ -3,10 +3,13 @@ import { join } from "node:path";
 
 const forbidden = [
   "SUPABASE_SERVICE_ROLE_KEY",
+  "OPENAI_API_KEY",
+  "synthetic_openai_canary_not_a_real_key",
   "synthetic_server_only_canary_not_a_real_key",
 ];
 if (process.env.SUPABASE_SERVICE_ROLE_KEY)
   forbidden.push(process.env.SUPABASE_SERVICE_ROLE_KEY);
+if (process.env.OPENAI_API_KEY) forbidden.push(process.env.OPENAI_API_KEY);
 async function scan(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);

@@ -24,3 +24,8 @@ No opening amount is seeded. Local tests now apply all six migrations.
 M7 reviews all 15 tables and nine public RPCs and revokes private-helper EXECUTE.
 Apply `202609270003_security.sql` after M6; see `../docs/M7_SETUP.md`.
 Local tests apply seven migrations and include security catalog/role regressions.
+
+M8 adds private temporary screenshot storage and upload-job metadata. Follow
+`../docs/M8_SETUP.md`: migration, cleanup Edge Function, Vault-backed five-minute
+schedule and verified heartbeat before enabling extraction. Do not put OpenAI or
+cleanup secrets in SQL files, Git, NEXT_PUBLIC variables or the frontend.

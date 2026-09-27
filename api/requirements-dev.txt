@@ -62,6 +62,10 @@ packaging==26.3
     #   build
     #   pytest
     #   wheel
+pillow==12.3.0
+    # via
+    #   -c requirements.txt
+    #   isna-finance-api (pyproject.toml)
 pip-tools==7.6.1
     # via isna-finance-api (pyproject.toml)
 pluggy==1.6.0

@@ -8,7 +8,8 @@ corrections are activated with core hosted synthetic acceptance; remaining check
 [M5 setup](docs/M5_SETUP.md). M6 dashboard and daily recap are implemented,
 with core hosted acceptance: [M6 setup](docs/M6_SETUP.md). M7 security hardening
 is implemented; apply its permission migration: [M7 setup](docs/M7_SETUP.md).
-AI remains outside this milestone.
+M8 screenshot draft extraction is implemented but disabled until storage cleanup
+and API credentials are configured: [M8 setup](docs/M8_SETUP.md).
 
 ## Repository
 

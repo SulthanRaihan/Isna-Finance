@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.extraction import router as extraction_router
 from app.api.health import router as health_router
 from app.api.master_data import router as master_router
 from app.api.money_out import router as money_out_router
@@ -15,7 +16,7 @@ from app.core.security import PrivateRequestMiddleware, configure_private_loggin
 from app.core.security_config import SecuritySettings
 from app.repositories.master_data import DataError
 
-app = FastAPI(title="Isna Finance API", version="0.7.0")
+app = FastAPI(title="Isna Finance API", version="0.8.0")
 configure_private_logging()
 security_settings = SecuritySettings()
 app.add_middleware(
@@ -26,6 +27,7 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
 )
 app.add_middleware(PrivateRequestMiddleware)
+app.include_router(extraction_router, prefix="/api/v1")
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(profile_router, prefix="/api/v1")
 app.include_router(master_router, prefix="/api/v1")

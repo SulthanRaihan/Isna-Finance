@@ -32,6 +32,8 @@ idna==3.20
     # via
     #   anyio
     #   httpx
+pillow==12.3.0
+    # via isna-finance-api (pyproject.toml)
 pydantic==2.13.5
     # via
     #   fastapi

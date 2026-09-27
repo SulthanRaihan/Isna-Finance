@@ -496,3 +496,11 @@ See 18_M5_MONEY_OUT.md for schema/API and verification details.
   activity fees and voided ancestors never contribute. Profit = Money In - Money Out.
 
 See 19_M6_REPORTING.md for the read-only API contract and bounded recap lists.
+
+## M8 Quick Order screenshot assist
+
+Optional single PNG/JPEG selector precedes the existing manual form. Show processing,
+editable-draft guidance, field confidence, missing/ambiguous customer warnings and
+an explicit Apply Draft button. Multiple-order results have no Apply button. Applying
+only populates fields; the ordinary Save Order action is still required. Provider
+outage leaves the complete manual form usable. No automatic payment/fulfillment.

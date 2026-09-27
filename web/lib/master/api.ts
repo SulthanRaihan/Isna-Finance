@@ -15,6 +15,7 @@ export async function api<T>(
   method = "GET",
   body?: unknown,
   idempotencyKey?: string,
+  timeoutMs = 15000,
 ): Promise<T> {
   const base = process.env.API_BASE_URL;
   if (!base) throw new ApiError("API_UNAVAILABLE", 503);
@@ -38,7 +39,7 @@ export async function api<T>(
       method,
       cache: "no-store",
       redirect: "error",
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(timeoutMs),
       headers: {
         Authorization: `Bearer ${data.session.access_token}`,
         "Content-Type": "application/json",

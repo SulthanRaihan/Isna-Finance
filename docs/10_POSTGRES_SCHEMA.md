@@ -362,3 +362,10 @@ See 18_M5_MONEY_OUT.md for schema/API and verification details.
   activity fees and voided ancestors never contribute. Profit = Money In - Money Out.
 
 See 19_M6_REPORTING.md for the read-only API contract and bounded recap lists.
+
+## M8 temporary upload metadata
+
+See migration `202609280001_ai_extraction.sql`: owner-readable `ai_upload_jobs`,
+private cleanup heartbeat, owner-checked claim/quota RPC, service-role-only cleanup
+heartbeat RPC, and private `isna-ai-temp` Storage policies. Jobs store no image or
+draft content; no financial tables or calculations are changed.

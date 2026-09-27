@@ -111,12 +111,12 @@ def test_every_domain_route_requires_authentication():
     assert checked >= 25
 
 
-def test_upload_and_ai_writes_remain_unavailable():
+def test_anonymous_ai_writes_remain_unavailable():
     from app.main import app
 
     client = TestClient(app)
-    for path in ("/api/v1/uploads", "/api/v1/ai/extract-order"):
-        assert client.post(path).status_code == 404
+    for path in ("/api/v1/ai/uploads", "/api/v1/ai/extract-order"):
+        assert client.post(path).status_code == 401
 
 
 def test_default_cors_does_not_enable_cross_origin_access(monkeypatch):

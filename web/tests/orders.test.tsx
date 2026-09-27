@@ -7,6 +7,12 @@ const mocks = vi.hoisted(() => ({
   addOrderCustomer: vi.fn(),
 }));
 vi.mock("@/app/order-actions", () => mocks);
+vi.mock("@/app/extraction-actions", () => ({
+  beginExtractionUpload: vi.fn(),
+  extractScreenshot: vi.fn(),
+  cancelExtractionUpload: vi.fn(),
+}));
+import * as extractionActions from "@/app/extraction-actions";
 import { OrderEditor } from "@/components/order-editor";
 import { money, previewIDR, type Order } from "@/lib/orders/types";
 const account = {
@@ -130,4 +136,43 @@ it("reloads date-specific choices without creating assignments", async () => {
   expect(
     await screen.findByRole("button", { name: "Simpan order" }),
   ).toBeDisabled();
+});
+
+it("applying a screenshot draft populates editable fields without writing an order", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
+  vi.mocked(extractionActions.beginExtractionUpload).mockResolvedValue({
+    ticket: {
+      job_id: "synthetic-job",
+      upload_url: "https://synthetic.test/upload",
+    },
+  });
+  vi.mocked(extractionActions.extractScreenshot).mockResolvedValue({
+    result: {
+      draft: {
+        customer_text: customer.display_name,
+        matched_customer_id: customer.id,
+        cny_amount: "2.00",
+        customer_rate: "100.005",
+      },
+      candidates: [customer],
+      confidence: { customer: 1, cny_amount: 1, customer_rate: 1 },
+      warnings: [],
+      multiple_orders: false,
+    },
+  });
+  render(<OrderEditor {...props} />);
+  fireEvent.change(screen.getByLabelText("Pilih screenshot"), {
+    target: {
+      files: [new File(["synthetic"], "image.png", { type: "image/png" })],
+    },
+  });
+  const apply = await screen.findByRole("button", {
+    name: "Terapkan draft ke form",
+  });
+  await waitFor(() => expect(apply).toBeEnabled());
+  fireEvent.click(apply);
+  expect(screen.getByLabelText("Jumlah CNY")).toHaveValue("2.00");
+  expect(screen.getByLabelText("Rate pelanggan")).toHaveValue("100.005");
+  expect(screen.getByLabelText("Jumlah CNY")).toBeEnabled();
+  expect(mocks.writeOrder).not.toHaveBeenCalled();
 });

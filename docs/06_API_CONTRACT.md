@@ -538,3 +538,16 @@ Unexpected errors return HTTP 500 with code INTERNAL_ERROR and a generic message
 no raw exception details. Optional exact-origin CORS configuration is described in
 20_M7_SECURITY.md; it never substitutes for owner authorization. No upload/AI API
 is exposed in M7.
+
+## M8 frozen extraction rules
+
+Provider OpenAI, initial model `gpt-5.4-mini`, Responses API with vision and strict
+Structured Outputs. Provider adapter remains replaceable. Credentials are backend
+environment variables only. Exactly one PNG/JPEG screenshot, maximum 5,000,000
+bytes (5 MB) and 20,000,000 decoded pixels. Private temporary storage; delete after
+success or failure and sweep orphaned images within one hour. One order per image;
+multiple orders produce a warning and require a new single-order screenshot, with
+no guessed selection. Return an editable draft only. Never create orders, receive
+payment, send RMB, or post outflows from extraction. Normal Pydantic order-field
+validation applies; expected_idr remains the normal financial engine's calculation.
+See `21_M8_EXTRACTION.md` for transport, cleanup, validation and test contracts.

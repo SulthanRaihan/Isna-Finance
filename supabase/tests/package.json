@@ -1,5 +1,5 @@
 {
  "name":"isna-database-tests", "private":true, "type":"module",
- "scripts":{"test":"node run-local.mjs"},
+ "scripts":{"test":"node run-local.mjs && node --experimental-strip-types --test ai-cleanup.test.mjs"},
  "devDependencies":{"@electric-sql/pglite":"0.5.8"}
 }

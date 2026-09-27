@@ -29,10 +29,10 @@ follow the end of a correction chain, including a terminal voided posting.
 - Existing Starlette/httpx and AnyIO deprecation warnings remain; no dependency
   changes were made in this milestone.
 
-Hosted M5 migration and shared browser acceptance remain pending. Isolated tests
+The user confirmed applying the hosted M5 migration on 2026-09-27. Core browser
+acceptance is recorded below; broader hosted checks remain pending. Isolated tests
 are not evidence of hosted concurrency behavior; concurrent multi-session testing
-on real PostgreSQL remains part of hosted verification. No real financial records
-were created or modified for this work.
+on real PostgreSQL remains part of hosted verification. Only explicitly labelled synthetic records were created or changed during acceptance.
 
 ## Decisions and conflicts
 
@@ -95,6 +95,43 @@ synthetic shared acceptance sequence. Do not run fixture SQL on the hosted proje
 
 ## Remaining work
 
-Apply M5 migration and complete shared synthetic acceptance. M6 is next only after
+Complete the remaining hosted checks listed below. M6 is next only after
 authorization: dashboard/daily recap, posted-only Money Out aggregation and existing
 Money In recognition, profit and reconciliation views. No M6 work is included here.
+
+## Hosted core acceptance — 2026-09-27
+
+User confirmed successful M5 migration. Restarted the existing local API from
+version 0.4.0 to 0.5.0 and restarted the frontend to synchronize server/client
+bundles. The earlier development hydration mismatch no longer appeared in the
+subsequent tested views. No application code or financial behavior changed.
+
+Verified through the logged-in owner UI:
+
+- ATM activity `57393d12-582f-4db2-989b-1e1cb23d9e19`, labelled
+  `Uji M5 sintetis 20260927-A. Bukan transaksi nyata.` Activity date 2020-01-01,
+  5600 CNY * 1.7 = 9520.00, initially unpaid. No ATM row appeared in Money Out.
+- Explicit payment dated 2020-01-03 created posting
+  `793d6b63-7672-4c02-8925-ca3285b88eae`. Activity date stayed Jan 1; paid
+  financial editing/payment controls disappeared.
+- Corrected the synthetic posting to 5601 * 1.7 = 9521.70 with a reason.
+  Original became voided; replacement `6eb78bdf-5958-489b-abab-a3c9bec4cbbc`
+  was posted and linked. The chain displayed original/replacement plus audit.
+- Voided that replacement with a synthetic invalidation reason. Both records
+  remained in the chain and audit; the ATM fee disappeared from the active list.
+- Returning to ATM showed the original 5600 CNY / 9520.00 activity snapshot,
+  paid date Jan 3, and current voided 9521.70 posting. No new payment control.
+- Exchange fee `80c13362-dd2e-429f-b0cf-f5718e61bf67`, labelled
+  `Uji M5 20260927-B - fee penukaran sintetis, bukan transaksi nyata`, saved
+  actual IDR 19.25 on 2020-01-03 with no CNY/rate formula. Detail and create audit
+  confirmed the amount/date. This synthetic record remains posted for inspection.
+- API OpenAPI reported 0.5.0; anonymous GET /api/v1/outflows returned 401.
+
+A transient access-service failure occurred after correction. The original detail
+was reread to verify committed state; no duplicate correction was submitted.
+No real financial data was changed. Do not recreate these fixtures on continuation.
+
+Remaining hosted checks: manual RMB purchase and other-expense browser flow,
+team-fee correction browser flow, stale/concurrent requests and database-level
+RLS tests with independent sessions. These have isolated automated coverage but
+are not claimed as verified on hosted PostgreSQL. No M6 work was started.

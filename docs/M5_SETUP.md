@@ -1,7 +1,8 @@
 # M5 activation and shared acceptance
 
 M5 code requires **202609270001_money_out.sql** after the existing M1-M4 migrations.
-M5 has not yet been applied or tested on the hosted project by this implementation.
+The user confirmed applying M5 on 2026-09-27. Core hosted synthetic browser
+acceptance passed; see M5_REPORT.md. Do not rerun this migration on this project.
 No new environment variables, secrets, service-role key, or Docker are needed.
 
 1. Open Supabase SQL Editor in the same development project. Run the **complete**

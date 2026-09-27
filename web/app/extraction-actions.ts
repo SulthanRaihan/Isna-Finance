@@ -38,7 +38,7 @@ export async function extractScreenshot(job_id: string) {
   } catch {
     return {
       error:
-        "Ekstraksi belum berhasil. Gunakan isian manual atau coba dengan screenshot baru. Pembersihan gambar tetap dijalankan.",
+        "Ekstraksi belum berhasil. Kuota gratis mungkin habis atau layanan tidak tersedia. Gunakan isian manual. Penghapusan gambar tetap diupayakan.",
     };
   }
 }

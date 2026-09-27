@@ -27,5 +27,5 @@ Local tests apply seven migrations and include security catalog/role regressions
 
 M8 adds private temporary screenshot storage and upload-job metadata. Follow
 `../docs/M8_SETUP.md`: migration, cleanup Edge Function, Vault-backed five-minute
-schedule and verified heartbeat before enabling extraction. Do not put OpenAI or
+schedule and verified heartbeat before enabling extraction. Do not put Groq API keys or
 cleanup secrets in SQL files, Git, NEXT_PUBLIC variables or the frontend.

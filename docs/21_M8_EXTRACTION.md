@@ -1,5 +1,26 @@
 # M8 screenshot extraction
 
+## Frozen provider configuration (supersedes initial OpenAI configuration)
+
+Groq Free tier only, default model `qwen/qwen3.8-27b`. The provider protocol remains
+replaceable, but M8 implements no fallback provider, paid tier selection, automatic
+retry, billing upgrade or quota bypass. A single Groq request either returns a
+validated draft or a generic unavailable response (including HTTP 429/402/5xx and
+timeouts). Core order/financial routes have no dependency on AI availability.
+
+Free tier is an organization billing setting, not a guarantee encoded in an API
+key or model name. Keep the Groq organization on Free and never upgrade it. Require
+`GROQ_FREE_TIER_CONFIRMED=true` only after inspecting Billing; default false blocks
+AI uploads even with a key. This operator attestation cannot detect a later external
+billing upgrade. No live inference until billing and cleanup are verified.
+
+A SQL migration does not prove cleanup deployment. Verify the Edge Function, active
+five-minute schedule, recent successful HTTP runs, heartbeat and synthetic orphan
+deletion separately. Until verified, report pending and keep AI disabled. Immediate
+deletion is attempted for success, provider errors and validation failures; the
+scheduler is the orphan safety net. Keep the one-hour maximum as an operational
+requirement, never claim it is met from repository tests alone.
+
 ## Architecture and boundaries
 
 Owner requests one upload ticket. API creates a random UUID job and a signed
@@ -8,10 +29,11 @@ to Storage; no screenshot bytes pass through a Next.js/Vercel request body. Extr
 accepts only a job UUID, never a client URL/path, and atomically claims it once.
 The API downloads the owned object, bounds bytes, verifies declared MIME against
 PNG/JPEG decode, rejects animation/invalid images and >20 MP. It sends the image
-inline to OpenAI Responses (store=false, no tools, no Files API). Provider receives
+inline to Groq Chat Completions (strict JSON schema, no tools, no Files/Batch API). Provider receives
 no customer list, account information, token, transaction history or database access.
-OpenAI retention/abuse-monitoring settings are separate; store=false is not a
-promise of provider Zero Data Retention. Production privacy review is required.
+Groq retention/data controls are separate from application cleanup. Verify Groq
+Data Controls before real use; do not infer provider Zero Data Retention from local
+image deletion. Production privacy review is required.
 
 A provider-independent service validates output using Pydantic, reusing the normal
 order amount/rate constraints. Invalid fields become null with fixed warnings;
@@ -67,15 +89,16 @@ malformed amount/rate, unexpected financial fields, refusal/incomplete/provider
 outage, multiple-order suppression, ambiguous customer match, prompt injection
 as data, cleanup after success/failure and orphan sweep threshold. Verify no
 financial repository call from extraction; applying draft never writes an order.
-User save reuses existing order validation. Secret scan includes OPENAI_API_KEY.
+User save reuses existing order validation. Test free-tier gate, HTTP 429/402/5xx,
+timeouts, one provider request without fallback, and immediate deletion on errors. Secret scan includes GROQ_API_KEY and legacy OPENAI_API_KEY.
 M9 evaluation and quality claims are out of scope.
 
 ## Official references
 
-- https://developers.openai.com/api/docs/models/gpt-5.4-mini
-- https://developers.openai.com/api/docs/guides/structured-outputs
-- https://developers.openai.com/api/docs/guides/images-vision
-- https://developers.openai.com/api/docs/guides/your-data
+- https://console.groq.com/docs/vision
+- https://console.groq.com/docs/structured-outputs
+- https://console.groq.com/docs/billing-faqs
+- https://console.groq.com/docs/your-data
 - https://supabase.com/docs/reference/javascript/file-buckets-createsigneduploadurl
 - https://supabase.com/docs/guides/functions/schedule-functions
 - https://vercel.com/docs/functions/limitations

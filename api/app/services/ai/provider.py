@@ -22,66 +22,64 @@ class VisionExtractionProvider(Protocol):
     async def extract_order(self, data: bytes, mime: str) -> RawExtraction: ...
 
 
-class OpenAIProvider:
+class GroqProvider:
+    """One request to Groq only; no retries or alternate provider/tier selection."""
+
     def __init__(self, client: httpx.AsyncClient, settings: AISettings):
         self.client, self.settings = client, settings
 
     async def extract_order(self, data: bytes, mime: str) -> RawExtraction:
+        if not self.settings.groq_free_tier_confirmed:
+            raise DataError(503, "AI_DISABLED", "Free-tier configuration is not verified.")
         try:
             response = await self.client.post(
-                "https://api.openai.com/v1/responses",
+                "https://api.groq.com/openai/v1/chat/completions",
                 headers={
-                    "Authorization": "Bearer " + self.settings.openai_api_key.get_secret_value()
+                    "Authorization": "Bearer " + self.settings.groq_api_key.get_secret_value()
                 },
                 timeout=60,
                 json={
-                    "model": self.settings.openai_model,
-                    "store": False,
-                    "max_output_tokens": 1500,
-                    "instructions": PROMPT,
-                    "input": [
+                    "model": self.settings.groq_model,
+                    "max_completion_tokens": 1500,
+                    "reasoning_effort": "none",
+                    "stream": False,
+                    "messages": [
+                        {"role": "system", "content": PROMPT},
                         {
                             "role": "user",
                             "content": [
                                 {
-                                    "type": "input_image",
-                                    "detail": "high",
-                                    "image_url": f"data:{mime};base64,"
-                                    + base64.b64encode(data).decode(),
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:{mime};base64,"
+                                        + base64.b64encode(data).decode()
+                                    },
                                 }
                             ],
-                        }
+                        },
                     ],
-                    "text": {
-                        "format": {
-                            "type": "json_schema",
+                    "response_format": {
+                        "type": "json_schema",
+                        "json_schema": {
                             "name": "order_draft",
                             "strict": True,
                             "schema": RawExtraction.model_json_schema(),
-                        }
+                        },
                     },
                 },
             )
             if response.status_code != 200:
                 raise ValueError("provider unavailable")
-            result = response.json()
-            if result.get("status") != "completed":
+            choices = response.json().get("choices", [])
+            if len(choices) != 1 or choices[0].get("finish_reason") != "stop":
                 raise ValueError("incomplete")
-            content = [
-                c
-                for item in result.get("output", [])
-                if item.get("type") == "message"
-                for c in item.get("content", [])
-            ]
-            if any(c.get("type") == "refusal" for c in content):
-                raise ValueError("refusal")
-            texts = [c["text"] for c in content if c.get("type") == "output_text"]
-            if len(texts) != 1:
-                raise ValueError("invalid output")
-            return RawExtraction.model_validate_json(texts[0], strict=True)
+            message = choices[0]["message"]
+            if message.get("refusal") or message.get("tool_calls"):
+                raise ValueError("refusal or unexpected action")
+            return RawExtraction.model_validate_json(message["content"], strict=True)
         except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError, ValidationError):
             raise DataError(
                 503,
                 "AI_UNAVAILABLE",
-                "Extraction unavailable. Manual Quick Order remains available.",
+                "Extraction unavailable or free quota exhausted. Use manual Quick Order.",
             ) from None

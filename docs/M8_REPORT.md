@@ -1,5 +1,8 @@
 # M8 implementation report
 
+Historical report for initial commit 0422500. Provider configuration is superseded
+by the Groq Free-tier rules in 21_M8_EXTRACTION.md and M8_SETUP.md.
+
 Date: 2026-09-28. Scope: M8 only. Implementation and local verification complete;
 hosted activation and live synthetic acceptance remain pending.
 

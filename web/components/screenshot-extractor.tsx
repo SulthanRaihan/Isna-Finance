@@ -68,7 +68,7 @@ export function ScreenshotExtractor({
       <h2 className="font-semibold">Bantu isi dari screenshot</h2>
       <p className="text-sm text-foreground-muted">
         Opsional. Satu order, satu PNG/JPEG, maksimal 5 MB dan 20 megapiksel.
-        Gambar dikirim ke OpenAI untuk ekstraksi; salinan sementara aplikasi
+        Gambar dikirim ke Groq untuk ekstraksi; salinan sementara aplikasi
         dihapus setelah proses, dengan pembersihan cadangan maksimal satu jam.
       </p>
       <label className="block text-sm">

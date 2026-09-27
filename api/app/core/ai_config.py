@@ -9,5 +9,6 @@ class AISettings(BaseSettings):
         env_file=Path(__file__).resolve().parents[2] / ".env", extra="ignore"
     )
     ai_extraction_enabled: bool = False
-    openai_api_key: SecretStr = SecretStr("")
-    openai_model: str = "gpt-5.4-mini"
+    groq_api_key: SecretStr = SecretStr("")
+    groq_model: str = "qwen/qwen3.8-27b"
+    groq_free_tier_confirmed: bool = False

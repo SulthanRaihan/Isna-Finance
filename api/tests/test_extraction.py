@@ -17,7 +17,7 @@ from app.repositories.master_data import DataError
 from app.schemas.extraction import RawExtraction, UploadTicket
 from app.services.ai.drafts import make_draft
 from app.services.ai.images import validate_image
-from app.services.ai.provider import OpenAIProvider
+from app.services.ai.provider import GroqProvider
 
 JOB = "80000000-0000-4000-8000-000000000001"
 RAW = {
@@ -110,35 +110,33 @@ def test_model_cannot_supply_authoritative_fields(extra):
         RawExtraction.model_validate({**RAW, extra: "injected"})
 
 
-def test_responses_adapter_uses_frozen_model_schema_and_no_tools():
+def test_groq_adapter_uses_frozen_model_schema_and_no_tools():
     async def run():
         def handle(request):
             payload = json.loads(request.content)
-            assert str(request.url) == "https://api.openai.com/v1/responses"
-            assert payload["model"] == "gpt-5.4-mini"
-            assert payload["store"] is False
+            assert str(request.url) == "https://api.groq.com/openai/v1/chat/completions"
+            assert payload["model"] == "qwen/qwen3.8-27b"
+            assert "service_tier" not in payload
+            assert payload["reasoning_effort"] == "none"
             assert "tools" not in payload
-            assert payload["text"]["format"]["strict"] is True
-            assert len(payload["input"][0]["content"]) == 1
-            assert payload["input"][0]["content"][0]["type"] == "input_image"
-            assert "untrusted data" in payload["instructions"]
+            assert payload["response_format"]["json_schema"]["strict"] is True
+            assert len(payload["messages"][1]["content"]) == 1
+            assert payload["messages"][1]["content"][0]["type"] == "image_url"
+            assert "untrusted data" in payload["messages"][0]["content"]
             assert JOB not in request.content.decode()
             return httpx.Response(
                 200,
                 json={
-                    "status": "completed",
-                    "output": [
-                        {
-                            "type": "message",
-                            "content": [{"type": "output_text", "text": json.dumps(RAW)}],
-                        }
-                    ],
+                    "choices": [{"finish_reason": "stop", "message": {"content": json.dumps(RAW)}}]
                 },
             )
 
         async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
-            result = await OpenAIProvider(
-                client, AISettings(_env_file=None, openai_api_key="synthetic-secret")
+            result = await GroqProvider(
+                client,
+                AISettings(
+                    _env_file=None, groq_api_key="synthetic-secret", groq_free_tier_confirmed=True
+                ),
             ).extract_order(picture(), "image/png")
             assert result.cny_amount == "100.25"
 
@@ -148,9 +146,10 @@ def test_responses_adapter_uses_frozen_model_schema_and_no_tools():
 @pytest.mark.parametrize(
     "response",
     [
-        {"status": "incomplete"},
-        {"status": "completed", "output": [{"type": "message", "content": [{"type": "refusal"}]}]},
-        {"status": "completed", "output": []},
+        {"choices": [{"finish_reason": "length", "message": {"content": json.dumps(RAW)}}]},
+        {"choices": [{"finish_reason": "stop", "message": {"refusal": "no"}}]},
+        {"choices": []},
+        {"choices": [{"finish_reason": "stop", "message": {"content": "not json"}}]},
     ],
 )
 def test_provider_failures_are_generic(response):
@@ -159,8 +158,13 @@ def test_provider_failures_are_generic(response):
             transport=httpx.MockTransport(lambda request: httpx.Response(200, json=response))
         ) as client:
             with pytest.raises(DataError) as error:
-                await OpenAIProvider(
-                    client, AISettings(_env_file=None, openai_api_key="synthetic-secret")
+                await GroqProvider(
+                    client,
+                    AISettings(
+                        _env_file=None,
+                        groq_api_key="synthetic-secret",
+                        groq_free_tier_confirmed=True,
+                    ),
                 ).extract_order(picture(), "image/png")
             assert error.value.code == "AI_UNAVAILABLE"
             assert "synthetic-secret" not in error.value.message
@@ -204,7 +208,7 @@ def test_extraction_cleans_up_success_failure_and_never_posts_finances(monkeypat
             return RawExtraction.model_validate(RAW)
 
     monkeypatch.setattr(extraction, "enabled_settings", lambda: AISettings(_env_file=None))
-    monkeypatch.setattr(extraction, "OpenAIProvider", Provider)
+    monkeypatch.setattr(extraction, "GroqProvider", Provider)
     app.dependency_overrides[require_owner] = lambda: {"id": JOB, "role": "owner"}
     app.dependency_overrides[extraction.extraction_repository] = lambda: Repo()
     try:
@@ -236,14 +240,27 @@ def test_request_accepts_one_job_only():
         ExtractRequest.model_validate({"job_id": [JOB, JOB]})
 
 
-def test_disabled_extraction_never_creates_upload(monkeypatch):
+@pytest.mark.parametrize(
+    "enabled,confirmed,key",
+    [(False, True, "synthetic"), (True, False, "synthetic"), (True, True, "")],
+)
+def test_disabled_extraction_never_creates_upload(monkeypatch, enabled, confirmed, key):
     calls = []
 
     class Repo:
         async def job(self, *args, **kwargs):
             calls.append("unexpected")
 
-    monkeypatch.setattr(extraction, "AISettings", lambda: AISettings(_env_file=None))
+    monkeypatch.setattr(
+        extraction,
+        "AISettings",
+        lambda: AISettings(
+            _env_file=None,
+            ai_extraction_enabled=enabled,
+            groq_free_tier_confirmed=confirmed,
+            groq_api_key=key,
+        ),
+    )
     app.dependency_overrides[require_owner] = lambda: {"id": JOB, "role": "owner"}
     app.dependency_overrides[extraction.extraction_repository] = lambda: Repo()
     try:
@@ -254,3 +271,43 @@ def test_disabled_extraction_never_creates_upload(monkeypatch):
         assert calls == []
     finally:
         app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("status", [402, 429, 500, 503, "timeout"])
+def test_groq_quota_outage_has_no_retry_or_provider_fallback(status):
+    async def run():
+        calls = []
+
+        def handle(request):
+            calls.append(str(request.url))
+            if status == "timeout":
+                raise httpx.ReadTimeout("synthetic-private-error", request=request)
+            return httpx.Response(status, json={"error": "synthetic-private-error"})
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+            with pytest.raises(DataError) as error:
+                await GroqProvider(
+                    client,
+                    AISettings(
+                        _env_file=None, groq_api_key="synthetic", groq_free_tier_confirmed=True
+                    ),
+                ).extract_order(picture(), "image/png")
+            assert error.value.status == 503
+            assert "synthetic-private-error" not in error.value.message
+        assert calls == ["https://api.groq.com/openai/v1/chat/completions"]
+
+    asyncio.run(run())
+
+
+def test_provider_refuses_unverified_billing_before_network():
+    async def run():
+        def handle(request):
+            pytest.fail("Unverified billing must never send a request")
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+            with pytest.raises(DataError):
+                await GroqProvider(client, AISettings(_env_file=None)).extract_order(
+                    picture(), "image/png"
+                )
+
+    asyncio.run(run())

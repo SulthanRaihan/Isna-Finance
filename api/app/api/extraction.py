@@ -14,7 +14,7 @@ from app.repositories.master_data import DataError
 from app.schemas.extraction import ExtractRequest, UploadTicket
 from app.services.ai.drafts import make_draft
 from app.services.ai.images import validate_image
-from app.services.ai.provider import OpenAIProvider, VisionExtractionProvider
+from app.services.ai.provider import GroqProvider, VisionExtractionProvider
 
 router = APIRouter(dependencies=[Depends(require_owner)])
 
@@ -28,7 +28,11 @@ def extraction_repository(
 
 def enabled_settings():
     settings = AISettings()
-    if not settings.ai_extraction_enabled or not settings.openai_api_key.get_secret_value():
+    if (
+        not settings.ai_extraction_enabled
+        or not settings.groq_free_tier_confirmed
+        or not settings.groq_api_key.get_secret_value()
+    ):
         raise DataError(503, "AI_DISABLED", "Extraction is not configured. Use manual Quick Order.")
     return settings
 
@@ -59,7 +63,7 @@ async def extract_order(
         if len(data) != job["size_bytes"]:
             raise DataError(422, "INVALID_IMAGE", "Uploaded size differs from the ticket.")
         validate_image(data, job["mime_type"])
-        provider: VisionExtractionProvider = OpenAIProvider(client, settings)
+        provider: VisionExtractionProvider = GroqProvider(client, settings)
         try:
             raw = await asyncio.wait_for(provider.extract_order(data, job["mime_type"]), timeout=60)
         except TimeoutError:

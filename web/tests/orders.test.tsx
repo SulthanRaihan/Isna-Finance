@@ -176,3 +176,29 @@ it("applying a screenshot draft populates editable fields without writing an ord
   expect(screen.getByLabelText("Jumlah CNY")).toBeEnabled();
   expect(mocks.writeOrder).not.toHaveBeenCalled();
 });
+
+it("manual order can still be saved after AI free quota is exhausted", async () => {
+  vi.mocked(extractionActions.beginExtractionUpload).mockResolvedValue({
+    error: "Kuota gratis habis",
+  });
+  mocks.writeOrder.mockResolvedValue({ order });
+  render(<OrderEditor {...props} />);
+  fireEvent.change(screen.getByLabelText("Pilih screenshot"), {
+    target: {
+      files: [new File(["synthetic"], "image.png", { type: "image/png" })],
+    },
+  });
+  await screen.findByText("Kuota gratis habis");
+  fireEvent.change(screen.getByLabelText("Pelanggan"), {
+    target: { value: customer.id },
+  });
+  fireEvent.change(screen.getByLabelText("Jumlah CNY"), {
+    target: { value: "1.00" },
+  });
+  fireEvent.change(screen.getByLabelText("Rate pelanggan"), {
+    target: { value: "100.005" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Simpan order" }));
+  await waitFor(() => expect(mocks.writeOrder).toHaveBeenCalledTimes(1));
+  expect(extractionActions.extractScreenshot).not.toHaveBeenCalled();
+});

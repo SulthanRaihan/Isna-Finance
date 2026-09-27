@@ -153,3 +153,7 @@ endpoints. Dates already explicitly selected by the user are not timezone-shifte
 
 `tzdata` supplies IANA data on Windows, following the
 [Python zoneinfo guidance](https://docs.python.org/3/library/zoneinfo.html#data-sources).
+
+M8 uses Groq Free tier only, with no paid-provider fallback. Extraction remains
+disabled until cleanup deployment and Free-tier billing are verified. See
+[the Groq update report](docs/M8_GROQ_REPORT.md).

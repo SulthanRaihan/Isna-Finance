@@ -181,8 +181,10 @@ strict optional CORS configuration, and closed upload-policy foundation.
 
 ## M8 frozen extraction rules
 
-Provider OpenAI, initial model `gpt-5.4-mini`, Responses API with vision and strict
-Structured Outputs. Provider adapter remains replaceable. Credentials are backend
+Provider Groq Free tier only, initial model `qwen/qwen3.8-27b`, Chat Completions
+with vision and strict Structured Outputs. No paid-provider fallback or automatic
+retry. Unavailable/rate-limited/quota-exhausted extraction leaves manual orders
+fully available. Provider adapter remains replaceable. Credentials are backend
 environment variables only. Exactly one PNG/JPEG screenshot, maximum 5,000,000
 bytes (5 MB) and 20,000,000 decoded pixels. Private temporary storage; delete after
 success or failure and sweep orphaned images within one hour. One order per image;

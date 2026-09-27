@@ -61,3 +61,21 @@ API: core/security.py, core/security_config.py, main.py, tests/test_security.py,
 202609270003_security.sql, tests/security.sql, tests/run-local.mjs. Documentation:
 README.md, supabase/README.md, docs/README.md, docs/06_API_CONTRACT.md,
 docs/08_SECURITY_PRIVACY.md, docs/20_M7_SECURITY.md, docs/M7_SETUP.md, this report.
+
+## Post-migration smoke verification - 2026-09-27
+
+The owner reported successful execution in Supabase SQL Editor. Subsequent
+read-only checks against the running local app connected to that project passed:
+
+- Owner session opened dashboard and daily recap; the existing synthetic team fee
+  remained IDR 100.01 and the team recap remained CNY 67.50.
+- Unauthenticated /me, /orders and /dashboard/daily requests returned 401 with
+  no-store and generated request IDs.
+- Untrusted synthetic Origin preflight returned 400 without Allow-Origin.
+- Frontend returned DENY framing, nosniff, no-referrer and the restrictive framing
+  CSP. API logs observed contained method, route template, status, duration and
+  generated request ID, without the supplied query parameters.
+
+No business rows were changed. The hosted SQL execution is owner-reported, not
+an independent administrator catalog inspection. Full role/ACL and mutation
+regressions were already verified locally; production checklist items remain.

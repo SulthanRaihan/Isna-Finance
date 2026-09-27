@@ -110,3 +110,24 @@ and the shared synthetic acceptance cases, including existing M3-M5 fixtures.
 Hosted migration and shared synthetic acceptance for M6. M5 broader hosted
 acceptance items remain documented separately. M7 security hardening is the next
 milestone only after authorization; no later work is included in this commit.
+
+## Hosted M6 core acceptance - 2026-09-27
+
+After the owner reported applying the M6 migration, the local API and frontend
+were restarted against the configured Supabase project. Read-only browser checks
+using existing synthetic fixtures passed:
+
+- Home loaded its current business date in Asia/Jakarta and showed an unresolved
+  earlier order plus an informational non-zero team balance warning.
+- 2020-01-03: Money Out 19.25, Money In 0, profit -19.25. The outflow recap contained
+  exactly the posted synthetic exchange fee; both voided ATM postings were excluded.
+- 2026-09-26: Money Out 100.01, entirely the canonical team-fee posting.
+- Pending on 2026-09-26 included the awaiting order dated 2026-09-25 (CNY 2,
+  expected IDR 200.01), with the current-status disclaimer visible.
+- Team recap showed cumulative CNY 67.50 as an informational reconciliation condition.
+- Missing opening consistently displayed Belum dikonfigurasi, without a fabricated zero.
+
+No hosted records were created or modified during these checks. Opening selection,
+multiple orders for one customer, receipt-date boundaries, pagination and role
+isolation remain covered by the automated local suites; they were not newly
+exercised with additional hosted fixtures in this acceptance pass.

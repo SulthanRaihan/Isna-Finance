@@ -530,3 +530,11 @@ See 18_M5_MONEY_OUT.md for schema/API and verification details.
   activity fees and voided ancestors never contribute. Profit = Money In - Money Out.
 
 See 19_M6_REPORTING.md for the read-only API contract and bounded recap lists.
+
+## M7 HTTP hardening
+
+API responses include a generated X-Request-ID and private, no-store cache policy.
+Unexpected errors return HTTP 500 with code INTERNAL_ERROR and a generic message;
+no raw exception details. Optional exact-origin CORS configuration is described in
+20_M7_SECURITY.md; it never substitutes for owner authorization. No upload/AI API
+is exposed in M7.

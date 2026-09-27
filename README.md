@@ -6,7 +6,9 @@ fee payment are activated with core hosted synthetic acceptance; see
 [M4 setup](docs/M4_SETUP.md). M5 ATM/card, manual Money Out, void, and atomic
 corrections are activated with core hosted synthetic acceptance; remaining checks:
 [M5 setup](docs/M5_SETUP.md). M6 dashboard and daily recap are implemented,
-with hosted activation pending: [M6 setup](docs/M6_SETUP.md). M7 and AI are not included.
+with core hosted acceptance: [M6 setup](docs/M6_SETUP.md). M7 security hardening
+is implemented; apply its permission migration: [M7 setup](docs/M7_SETUP.md).
+AI remains outside this milestone.
 
 ## Repository
 
@@ -55,7 +57,7 @@ The system sans-serif stack avoids build-time font downloads.
 cd api
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+.\.venv\Scripts\python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 --no-access-log
 ```
 
 No PowerShell activation-policy changes are needed. In another terminal, from `api/`:

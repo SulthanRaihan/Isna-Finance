@@ -173,3 +173,8 @@ applicable - AI extraction - file uploads - high-cost endpoints
 
 See `14_M1_AUTH.md` for the approved email/password, single-owner access rules,
 profile provisioning, initial RLS, and `/api/v1/me` contract.
+
+## M7 implementation
+
+See `20_M7_SECURITY.md` for the reviewed database permission matrix, safe logging,
+strict optional CORS configuration, and closed upload-policy foundation.

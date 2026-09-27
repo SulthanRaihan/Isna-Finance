@@ -52,6 +52,8 @@ export async function writeMoney(
       key,
     );
     revalidatePath("/atm");
+    revalidatePath("/");
+    revalidatePath("/recaps");
     revalidatePath("/outflows");
     revalidatePath("/outflows/[id]", "page");
     revalidatePath("/activity");

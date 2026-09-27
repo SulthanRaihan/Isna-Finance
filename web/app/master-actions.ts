@@ -23,6 +23,8 @@ export async function saveRecord(
     );
     revalidatePath(`/${entity}`);
     revalidatePath("/daily-accounts");
+    revalidatePath("/");
+    revalidatePath("/recaps");
     return { ok: true };
   } catch (error) {
     return actionError(error);
@@ -43,6 +45,8 @@ export async function saveDaily(
       default_account_id: defaultId,
     });
     revalidatePath("/daily-accounts");
+    revalidatePath("/");
+    revalidatePath("/recaps");
     revalidatePath("/accounts");
     return { ok: true };
   } catch (error) {

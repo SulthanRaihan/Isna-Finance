@@ -6,6 +6,7 @@ import {
   CirclePlus,
   House,
   ListOrdered,
+  ClipboardList,
   MoreHorizontal,
   Wallet,
   type LucideIcon,
@@ -106,6 +107,14 @@ export function AppShell({
           Isna Finance
         </Link>
         <Navigation activePath={activePath} />
+        <Link
+          href="/recaps"
+          aria-current={activePath === "/recaps" ? "page" : undefined}
+          className="mt-2 flex min-h-12 items-center gap-3 rounded-xl px-3 text-sm font-medium text-primary"
+        >
+          <ClipboardList size={20} aria-hidden="true" />
+          Daily Recap
+        </Link>
         <form action={logout} className="mt-6">
           <button className="min-h-11 w-full rounded-xl border px-3 text-sm font-medium">
             Keluar

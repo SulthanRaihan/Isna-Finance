@@ -16,3 +16,7 @@ manual outflow void/correction chains. Apply `202609270001_money_out.sql` after
 M1-M4, following `../docs/M5_SETUP.md`; keep RLS enabled. All five migrations and
 rollback-only synthetic regression suites run in the disposable local test runner.
 Never run fixture SQL on the hosted project.
+
+M6 adds a read-only reporting RPC and owner-readable business balance openings.
+Apply `202609270002_reporting.sql` after M5, following `../docs/M6_SETUP.md`.
+No opening amount is seeded. Local tests now apply all six migrations.

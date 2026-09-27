@@ -349,22 +349,26 @@ See `18_M5_MONEY_OUT.md` for complete M5 contract.
 
 ## GET `/dashboard/daily?date=2026-09-20`
 
-Response shape:
+Summary excerpt (full M6 fields and pagination: `19_M6_REPORTING.md`):
 
 ``` json
 {
   "date": "2026-09-20",
   "customer_count": 17,
-  "order_count": 17,
+  "order_count": 20,
   "total_cny": "48250.00",
   "money_in_idr": "0.00",
   "money_out_idr": "0.00",
   "profit_idr": "0.00",
   "recorded_business_balance_idr": null,
+  "business_position": {"status": "not_configured", "amount_idr": null, "opening": null},
+  "timezone": "Asia/Jakarta",
+  "pending_count": 5,
   "orders": {
     "awaiting_payment": 2,
     "ready_to_send": 3,
-    "completed": 12
+    "sent_awaiting_payment": 0,
+    "completed": 15
   },
   "warnings": []
 }
@@ -505,3 +509,24 @@ Applies to team fees, ATM/card fees, RMB purchases, exchange fees and other manu
 outflows. M3 realized orders stay locked; no order correction is introduced.
 Exchange fee uses actual user-entered IDR. Only RMB purchase uses CNY * rate.
 See 18_M5_MONEY_OUT.md for schema/API and verification details.
+
+## M6 frozen reporting rules (2026-09-27)
+
+- customer_count = distinct customer_id among orders whose business_date equals
+  selected_date; order_count counts those orders separately. CNY volume sums them.
+- Needs Attention includes orders with business_date <= selected_date that are
+  incomplete according to CURRENT payment/fulfillment status. Include unresolved
+  prior dates. No historical point-in-time status reconstruction is provided.
+- An opening is the balance at the START of effective_date, before that day's
+  transactions. Select the latest opening <= selected_date; add received Money In
+  and subtract posted Money Out from effective_date through selected_date INCLUSIVE.
+  Without an applicable opening return status=not_configured and amount=null;
+  never assume zero. This is recorded business position, not actual bank balance.
+- Reconciliation conditions are informational: sent RMB with awaiting payment,
+  and non-zero cumulative team RMB balances through selected_date. They are not
+  automatic errors and do not change financial recognition or order status.
+- Money In continues to use the business-local date of idr_received_at only.
+  Money Out uses posted canonical financial_outflows.business_date only; unpaid
+  activity fees and voided ancestors never contribute. Profit = Money In - Money Out.
+
+See 19_M6_REPORTING.md for the read-only API contract and bounded recap lists.

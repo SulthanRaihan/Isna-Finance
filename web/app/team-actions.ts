@@ -30,6 +30,8 @@ export async function writeTeam(
           : `/team-activities/${id}${operation === "pay" ? "/pay" : ""}`;
     await api(path, operation === "edit" ? "PATCH" : "POST", payload, key);
     revalidatePath("/activity");
+    revalidatePath("/");
+    revalidatePath("/recaps");
     revalidatePath("/orders");
     return { ok: true };
   } catch (e) {

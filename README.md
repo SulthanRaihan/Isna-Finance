@@ -5,7 +5,8 @@ M3 Orders has partial hosted synthetic acceptance. M4 team ledger and explicit
 fee payment are activated with core hosted synthetic acceptance; see
 [M4 setup](docs/M4_SETUP.md). M5 ATM/card, manual Money Out, void, and atomic
 corrections are activated with core hosted synthetic acceptance; remaining checks:
-[M5 setup](docs/M5_SETUP.md). M6 dashboard/recap and AI remain out of scope.
+[M5 setup](docs/M5_SETUP.md). M6 dashboard and daily recap are implemented,
+with hosted activation pending: [M6 setup](docs/M6_SETUP.md). M7 and AI are not included.
 
 ## Repository
 

@@ -1,19 +1,18 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 vi.mock("@/app/auth-actions", () => ({ logout: vi.fn() }));
-import { WorkspaceHome } from "@/components/workspace-home";
 import { AppShell } from "@/components/app-shell";
 
-describe("M1 shell", () => {
-  it("provides an accessible preview and disables unfinished workflows", () => {
+describe("Application shell", () => {
+  it("provides accessible navigation and daily recap", () => {
     render(
       <AppShell>
-        <WorkspaceHome displayName="Synthetic Owner" />
+        <h1>Ringkasan harian</h1>
       </AppShell>,
     );
     expect(
       screen.getByRole("heading", {
-        name: "Selamat datang, Synthetic Owner.",
+        name: "Ringkasan harian",
         level: 1,
       }),
     ).toBeVisible();
@@ -36,6 +35,9 @@ describe("M1 shell", () => {
         "/activity",
       );
     }
-    expect(screen.getByText(/Aktivitas tim tersedia/)).toBeVisible();
+    expect(screen.getByRole("link", { name: "Daily Recap" })).toHaveAttribute(
+      "href",
+      "/recaps",
+    );
   });
 });

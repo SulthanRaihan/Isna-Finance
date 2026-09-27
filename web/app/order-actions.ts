@@ -81,6 +81,8 @@ export async function writeOrder(
       key,
     );
     revalidatePath("/orders");
+    revalidatePath("/");
+    revalidatePath("/recaps");
     if (id) revalidatePath(`/orders/${id}`);
     return { order };
   } catch (error) {

@@ -1,11 +1,12 @@
 # M8 setup: screenshot draft extraction
 
 M8 remains disabled until all steps below succeed. Manual Quick Order works without
-AI. Deployment update on 2026-09-28: ai-cleanup is deployed with the repository
-source and dedicated-secret authentication. An unauthenticated POST returns 401
-with an empty body. Secret provisioning, cron schedule and authenticated cleanup
-verification remain pending. The previous database check found cron.job absent
-and last_success NULL; deployment alone does not establish operational cleanup.
+AI. Deployment update on 2026-09-28: ai-cleanup, its dedicated secret, Vault entries
+and the active five-minute cron job are configured. The scheduled 11:40 UTC run
+removed a synthetic orphan and refreshed heartbeat; the bucket was confirmed empty.
+This used an accelerated-age fixture, not an hour-long observation. See
+[M8_CLEANUP_DEPLOYMENT.md](M8_CLEANUP_DEPLOYMENT.md) for evidence and limits.
+Groq billing/key and live application extraction acceptance remain pending.
 
 ## 1. Database and Storage
 

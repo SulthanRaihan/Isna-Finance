@@ -1,10 +1,11 @@
 # M8 setup: screenshot draft extraction
 
 M8 remains disabled until all steps below succeed. Manual Quick Order works without
-AI. Verified in the hosted dashboard on 2026-09-28: AI migration exists, no Edge
-Functions are deployed, cron.job is absent, and cleanup last_success is NULL.
-The public cleanup endpoint also returned 404 NOT_FOUND. Cleanup function and
-schedule are pending deployment/configuration; SQL alone is not operational cleanup.
+AI. Deployment update on 2026-09-28: ai-cleanup is deployed with the repository
+source and dedicated-secret authentication. An unauthenticated POST returns 401
+with an empty body. Secret provisioning, cron schedule and authenticated cleanup
+verification remain pending. The previous database check found cron.job absent
+and last_success NULL; deployment alone does not establish operational cleanup.
 
 ## 1. Database and Storage
 
